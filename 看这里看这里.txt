@@ -1,0 +1,8 @@
+1. 进入项目文件夹（就是这个->MeetSynth-Frontend）
+2. 打开终端使用命令 npm install
+3. 再使用命令 npm run dev
+4. ctrl + 鼠标单击跳出的地址或者浏览器直接输入url http://localhost:5175/ 即可打开项目啦
+
+PS：
+1. 打开的前提是下载好 node.js
+2. 目前搞了三个页面，都没有实现路由跳转的逻辑，所以要自己在浏览器输入网址，各个页面的网址可以打开 src\router.tsx 文件查看，比如要看 LoginPage 的组件就在http://localhost:5175/ 后面添加 login

@@ -9,11 +9,11 @@ const router = createBrowserRouter([
         element: <HomePage />
     },
     {
-        path: '/login',
+        path: '/login', // 登录页面相对地址
         element: <LoginPage />,
     },
     {
-        path: '/meeting',
+        path: '/meeting', // 会议页面相对地址
         element: <MeetingLayout />,
     },
 ])
