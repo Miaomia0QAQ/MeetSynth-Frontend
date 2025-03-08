@@ -1,0 +1,191 @@
+/* src/components/MeetingLayout.css */
+.meeting-background {
+    background: linear-gradient(45deg,
+            #484c6f,
+            /* 深海灰蓝 */
+            #4c418d,
+            /* 灰紫 */
+            #2e2a3b
+            /* 炭灰 */
+        );
+    background-size: 400% 400%;
+    animation: GradientFlow 10s ease-in-out infinite;
+    /* 延长动画时间 */
+    min-height: 100vh;
+    color: white;
+    overflow-y: auto;
+}
+
+.meeting-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    gap: 20px;
+    overflow-x: hidden;
+    transition: all 0.3s;
+
+    .main-container {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+
+    /* Header样式 */
+    .header {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        padding-left: 50px;
+        gap: 17px;
+    }
+
+    .logo {
+        width: 30px;
+        height: 30px;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        flex-grow: 1;
+    }
+
+    .date-box {
+        width: 124px;
+        color: #DFDFDF;
+        font-size: 14px;
+        opacity: 0.84;
+        transform: translateY(5px);
+    }
+
+    .title {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .menu-button {
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+    }
+
+    /* 主体内容 */
+    .main-content {
+        flex: 1;
+        display: flex;
+        padding: 0 0 50px 50px;
+        gap: 40px;
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+
+    /* 左侧面板 */
+    .left-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        justify-content: space-between;
+    }
+
+    .text-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding-top: 30px;
+    }
+
+    .text-title {
+        color: white;
+        font-size: 18px;
+        margin: 0 0 20px;
+    }
+
+    .text-content.editable {
+        max-height: 80%;
+        border: 1px solid #A3AAF2;
+        border-radius: 4px;
+        padding: 8px;
+        min-height: 150px;
+        outline: none;
+    }
+
+    .text-content.editable:focus {
+        box-shadow: 0 0 0 2px rgba(163, 170, 242, 0.2);
+        border-color: #747bd6;
+    }
+
+    .text-content {
+        color: #DFDFDF;
+        opacity: 0.84;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .recording-control {
+        width: 100%;
+        height: 50px;
+        background: rgb(241, 241, 241);
+        border: 1px solid #BBBBBB;
+        border-radius: 15px;
+        box-shadow: 0px 2px 9px 3px rgba(192, 192, 192, 0.25);
+        position: absolute;
+        bottom: 0;
+    }
+
+    /* 右侧面板 */
+    .right-panel {
+        position: relative;
+        flex-direction: column;
+        flex: 1;
+        background: rgb(241, 241, 241);
+        border: 1px solid #BBBBBB;
+        border-radius: 15px;
+        box-shadow: 0px 2px 9px 3px rgba(192, 192, 192, 0.25);
+        padding: 10px;
+
+        .summary-header {
+            top: 0;
+            left: 0;
+            width: 100%;
+            border-radius: 15px;
+            position: absolute;
+            padding: 10px 0 0 20px;
+            height: 60px;
+            z-index: 1;
+            background: linear-gradient(to bottom, rgb(241, 241, 241) 40px, rgba(255, 255, 255, 0) 60px);
+        }
+
+        .icon-box {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #BBBBBB;
+            border-radius: 50%;
+            text-align: center;
+            display: inline-block;
+            transform: translateY(5px);
+            margin-right: 8px;
+
+            svg {
+                margin-top: 3px;
+            }
+        }
+    }
+
+    /* 侧边栏菜单 */
+    .side-menu {
+        width: 80px;
+        background-color: #5a5091cb;
+    }
+
+    .side-menu-item {
+        font-size: 36px;
+        text-align: center;
+    }
+}

@@ -1,0 +1,29 @@
+.ai-summary-container {
+    position: relative;
+    flex: 1;
+    max-height: 90%;
+    max-width: 800px;
+    overflow-y: auto;
+    padding-top: 30px;
+}
+
+.ai-summary-container::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    transition: all 0.3s;
+}
+
+.ai-summary-container:hover::-webkit-scrollbar-thumb {
+    background-color:#7d7d7d9e;/*滑块颜色*/
+}
+
+.summary-content {
+    color: #666;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.loading-indicator {
+    color: #666;
+    text-align: center;
+    padding: 10px;
+}
