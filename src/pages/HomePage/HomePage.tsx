@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Header from './Header/Header';
 import './HomePage.css'
 import ScrollIndicator from './ScrollIndicator/ScrollIndicator';
+import MeetingScheduler from './MeetingScheduler/MeetingScheduler';
 
 // 定义 Section 配置类型
 interface SectionConfig {
@@ -37,7 +38,6 @@ const HomePage: React.FC = () => {
         setIsScrolling(true);
         setActiveSection(targetId)
 
-        console.log(isScrolling, '正在滚动')
         target.scrollIntoView({ behavior: "smooth" })
 
         setTimeout(() => {
@@ -111,13 +111,7 @@ const HomePage: React.FC = () => {
             </section>
 
             <section key="schedule" className="fullscreen-section" id="schedule">
-                <div className="split-container">
-                    <div className="form-panel">
-                        <h2>预定会议</h2>
-                        <div className="placeholder-box" style={{ height: '400px' }} />
-                    </div>
-                    <div className="image-panel"></div>
-                </div>
+                <MeetingScheduler />
             </section>
 
             <section key="upload" className="fullscreen-section" id="upload" style={{ backgroundColor: '#fff' }}>
