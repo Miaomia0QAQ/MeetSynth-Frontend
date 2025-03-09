@@ -21,6 +21,8 @@ button:focus, button:focus-visible {
 
 /*整个滚动条的样式*/
 ::-webkit-scrollbar{
+  position: absolute;
+  right: 0;
   width:8px;/*滚动条的宽度*/
   height:8px;/*滚动条的高度（针对水平滚动条）*/
 }
