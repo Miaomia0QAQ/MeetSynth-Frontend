@@ -17,9 +17,26 @@
         backface-visibility: hidden;
     }
 
+    
+    .title-content {
+        padding-top: 15vh;
+        margin: auto;
+        max-width: 1200px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .title-content h1 {
+        font-size: 48px;
+    }
+
+    .title-content p {
+        margin-top: 44px;
+    }
+
     /* hero 背景效果 */
     .fullscreen-section#hero {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        background: linear-gradient(30deg, #000 30%, #2a2a2a 100%);
         min-height: 100vh;
         overflow: hidden;
         position: relative;
@@ -40,65 +57,32 @@
         backface-visibility: hidden;
     }
 
-    .title-content {
-        padding-top: 15vh;
-        margin: auto;
-        max-width: 1200px;
-        text-align: center;
-        color: #ffffff;
-    }
-
-    .title-content h1 {
-        font-size: 48px;
-    }
-
-    .title-content p {
-        margin-top: 44px;
-    }
-
     .fullscreen-section#quick {
-        background:
-            linear-gradient(45deg,
-                rgba(42, 42, 42, 0.95) 0%,
-                rgba(52, 52, 89, 0.92) 100%);
+        position: relative;
         backdrop-filter: blur(12px);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+        /* background: linear-gradient(45deg, #2a2a2a 0%, #1a1a1a 100%); */
+        background-color: #000;
     }
 
-    /* 添加预定会议的背景层次效果 */
-    .fullscreen-section#schedule::before,
-    .fullscreen-section#schedule::after {
+    .fullscreen-section#schedule::before {
         content: '';
         position: absolute;
-        inset: 0;
-        pointer-events: none;
-    }
-
-    /* 第一层：径向渐变纹理 */
-    .fullscreen-section#schedule::before {
+        top: -130vh;
+        left: 0;
+        width: 100%;
+        height: 180%;
         background:
-            radial-gradient(circle at 75% 30%,
-                rgba(40, 40, 40, 0.4) 0%,
-                transparent 40%),
-            radial-gradient(circle at 25% 70%,
-                rgba(30, 30, 30, 0.3) 0%,
-                transparent 40%);
-        z-index: 1;
+            url('../../assets/halo-effect.png') no-repeat center;
+        background-size: cover;
+        opacity: 1;
+        z-index: -1;
     }
 
-    /* 第二层：动态噪点纹理 */
-    .fullscreen-section#schedule::after {
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        opacity: 0.03;
-        z-index: 2;
-    }
-
-    /* 第三层：边缘光晕效果 */
     .fullscreen-section#schedule {
-        box-shadow:
-            inset 0 0 80px rgba(0, 0, 0, 0.6),
-            inset 0 0 30px rgba(0, 0, 0, 0.3);
+        /* background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); */
+        background-color: #000;
     }
 
     .section-content {
@@ -108,12 +92,16 @@
     }
 
     .fullscreen-section#upload {
-        background: linear-gradient(45deg, #3d3d6b 0%, #4a4a7a 100%);
-        color: '#333'
+        background-color: #000;
+        color: '#333';
+
+        h2 {
+            color: white;
+        }
     }
 
     .placeholder-box {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.5);
         border-radius: 8px;
         margin-top: 2rem;
     }

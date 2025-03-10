@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './MeetingScheduler.css';
 import { useNavigate } from 'react-router-dom';
+import { animate } from 'framer-motion';
 
 interface MeetingForm {
     title: string;
@@ -11,7 +12,11 @@ interface MeetingForm {
     files: File[];
 }
 
-const MeetingScheduler: React.FC = () => {
+interface MeetingSchedulerProps {
+    activeSection: string;
+}
+
+const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
     const [formData, setFormData] = useState<MeetingForm>({
         title: '',
         description: '',
@@ -24,25 +29,29 @@ const MeetingScheduler: React.FC = () => {
     const navigate = useNavigate();
     const containerRef = useRef<HTMLDivElement>(null);
     const formGroupsRef = useRef<Array<HTMLDivElement | null>>([]);
+    const [isAnimateIn, setIsAnimateIn] = useState(false);
+    
+    useEffect(() => {
+        if (activeSection === 'schedule') {
+            setIsAnimateIn(true);
+        } else {
+            setIsAnimateIn(false);
+        }
+    }, [activeSection]);
 
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-in');
-                    }
-                });
-            },
-            { threshold: 0.1 }
-        );
-
-        if (containerRef.current) observer.observe(containerRef.current);
-        formGroupsRef.current.forEach(el => el && observer.observe(el));
-
-        return () => observer.disconnect();
-    }, []);
-
+        if (isAnimateIn) {
+            containerRef.current?.classList.add('animate-in');
+            formGroupsRef.current.forEach((formGroup) => {
+                formGroup?.classList.add('animate-in');
+            });
+        } else {
+            containerRef.current?.classList.remove('animate-in');
+            formGroupsRef.current.forEach(formGroup => {
+                formGroup?.classList.remove('animate-in');
+            })
+        }
+    }, [isAnimateIn]);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Meeting Scheduled:', formData);

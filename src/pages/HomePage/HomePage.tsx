@@ -112,11 +112,11 @@ const HomePage: React.FC = () => {
             </section>
 
             <section key="schedule" className="fullscreen-section" id="schedule">
-                <MeetingScheduler />
+                <MeetingScheduler activeSection={activeSection} />
             </section>
 
-            <section key="upload" className="fullscreen-section" id="upload" style={{ backgroundColor: '#fff' }}>
-                <AudioVideoUploader />
+            <section key="upload" className="fullscreen-section" id="upload">
+                <AudioVideoUploader activeSection={activeSection} />
             </section>
         </div>
     );

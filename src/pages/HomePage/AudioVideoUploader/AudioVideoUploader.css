@@ -1,0 +1,139 @@
+.audio-uploader-container {
+    padding: 40px 24px;
+    border-radius: 12px;
+    position: relative;
+
+    .audio-uploader-title {
+        text-align: center;
+        color: #333;
+        margin-bottom: 48px;
+    }
+
+    .title-highlight {
+        color: #5f5de5;
+    }
+
+    .uploadDragger {
+        background: #fff;
+        border-color: #5f5de5 !important;
+        max-width: 800px;
+        margin: 0 auto 48px;
+    }
+
+    .uploadDragger .ant-upload-drag-icon {
+        font-size: 48px;
+        color: #5f5de5;
+    }
+
+    .uploadText {
+        color: #666;
+    }
+
+    .cardListContainer {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        height: 490px;
+        padding: 60px 0 30px 0;
+    }
+
+    .cardListItem {
+        position: absolute;
+        left: 50%;
+        margin-left: -150px;
+        height: 400px;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.5s;
+        transition-delay: 0.5s;
+    }
+
+    .cardListItem.animate-in:nth-child(1) {
+        transform: translate(-400px, 0) rotate(-15deg);
+    }
+
+    .cardListItem.animate-in:nth-child(2) {
+        transform: translate(-200px, -50px) rotate(-8deg);
+    }
+
+    .cardListItem.animate-in:nth-child(3) {
+        transform: translate(0, -80px);
+    }
+
+    .cardListItem.animate-in:nth-child(4) {
+        transform: translate(200px, -50px) rotate(8deg);
+    }
+
+    .cardListItem.animate-in:nth-child(5) {
+        transform: translate(400px, 0) rotate(15deg);
+    }
+
+    .featuresCard {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg,
+                #000000 0%,
+                /* 左上角：黑色 */
+                #0000ff79 50%,
+                /* 中间：蓝色 */
+                #6a0d9c 100%
+                /* 右下角：深紫色 */
+            );
+        padding: 40px 20px;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #636363;
+        color: white;
+    }
+
+    .iconAccent {
+        font-size: 48px;
+        color: #1890ff;
+    }
+
+    .languageButton {
+        margin: 4px;
+        padding: 0 20px;
+    }
+
+    .customDots li button {
+        background: #1890ff !important;
+        opacity: 0.3;
+    }
+
+    .customDots li.slick-active button {
+        opacity: 1;
+    }
+
+    .actionButtonWrap {
+        text-align: center;
+        margin-top: 48px;
+    }
+
+    .actionButtonWrap::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -50px;
+        width: 80vw;
+        z-index: -1;
+        height: 400px;
+        background: radial-gradient(at bottom center, #7553cb 7%, #3033c8 23%, #000 56%);;
+    }
+
+    .actionButton {
+        background: #5f5de5;
+        border-color: #5f5de5 !important;
+        padding: 0 40px;
+        height: 48px;
+    }
+}
