@@ -39,26 +39,12 @@ const Users = () => {
             username: 'john_doe',
             email: 'john@meetsynth.com',
             password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
         },
         {
-            id: 345,
+            id: 666,
             username: 'john_doe',
             email: 'john@meetsynth.com',
             password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
-        },{
-            id: 345,
-            username: 'john_doe',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
-        },{
-            id: 358,
-            username: 'john_doe',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
         },{
             id: 5348,
             username: 'john_doe',
@@ -70,7 +56,6 @@ const Users = () => {
             username: 'john_doe',
             email: 'john@meetsynth.com',
             password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
         },{
             id: 738,
             username: 'john_doe',
@@ -134,7 +119,7 @@ const Users = () => {
                 <Avatar
                     src={record.avatar}
                     icon={!record.avatar && <UserOutlined />}
-                    style={{ backgroundColor: '#7265e6' }}
+                    style={{ backgroundColor: '#c4c4c4' }}
                 />
             ),
         },

@@ -84,10 +84,10 @@ const AdminLayout = () => {
                 />
             </Sider>
 
-            <Layout>
+            <Layout style={{height: '100vh'}}>
                 <Header style={{
                     padding: '0 24px',
-                    background: '#fff',
+                    background: '#ccd0dc',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -119,7 +119,9 @@ const AdminLayout = () => {
                     margin: '24px 16px',
                     padding: 24,
                     borderRadius: 8,
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)'
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)',
+                    height: '100%',
+                    overflow: 'auto'
                 }}>
                     <Outlet />
                 </Content>

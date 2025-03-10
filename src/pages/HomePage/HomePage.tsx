@@ -95,7 +95,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="home-container" ref={containerRef}>
-            <Header scrollToSection={scrollToSection}/>
+            <Header scrollToSection={scrollToSection} />
             <section key="hero" className="fullscreen-section" id="hero">
                 <div className={`title-content ${activeSection === 'hero' || 'quick' ? '' : 'hide'}`}>
                     <h1>MeetSynth AI会议纪要生成器</h1>
