@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './MeetingScheduler.css';
+import { useNavigate } from 'react-router-dom';
 
 interface MeetingForm {
     title: string;
@@ -20,6 +21,7 @@ const MeetingScheduler: React.FC = () => {
         files: []
     });
 
+    const navigate = useNavigate();
     const containerRef = useRef<HTMLDivElement>(null);
     const formGroupsRef = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -45,6 +47,8 @@ const MeetingScheduler: React.FC = () => {
         e.preventDefault();
         console.log('Meeting Scheduled:', formData);
         alert('会议预定成功！');
+        // 跳转至 '/meeting'
+        navigate('/meeting')
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

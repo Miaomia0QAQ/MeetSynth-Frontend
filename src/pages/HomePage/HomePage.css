@@ -17,6 +17,29 @@
         backface-visibility: hidden;
     }
 
+    /* hero 背景效果 */
+    .fullscreen-section#hero {
+        background-color: #1a1a1a;
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .fullscreen-section#hero::before {
+        content: '';
+        position: absolute;
+        inset: -300%;
+        background: linear-gradient(45deg,
+                rgba(194, 194, 194, 0) 45%,
+                rgba(194, 194, 194, 0.03) 50%,
+                rgba(194, 194, 194, 0) 65%);
+        animation: flow 6s infinite;
+        pointer-events: none;
+        z-index: 2;
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+
     .title-content {
         padding-top: 15vh;
         margin: auto;
@@ -37,7 +60,7 @@
         background-color: #4c418d;
     }
 
-    /* 添加背景层次效果 */
+    /* 添加预定会议的背景层次效果 */
     .fullscreen-section#schedule::before,
     .fullscreen-section#schedule::after {
         content: '';
@@ -82,5 +105,35 @@
         background: rgba(255, 255, 255, 0.1);
         border-radius: 8px;
         margin-top: 2rem;
+    }
+}
+
+@keyframes flow {
+    0% {
+        transform: translate(-50%, -50%);
+        opacity: 0;
+    }
+
+    10% {
+        transform: translate(-50%, -50%);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    90% {
+        transform: translate(50%, 50%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(50%, 50%);
+        opacity: 0;
     }
 }

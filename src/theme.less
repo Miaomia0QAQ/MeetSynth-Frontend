@@ -1,0 +1,28 @@
+// 自定义主题变量
+@primary-color: #5a6a85; // 灰蓝色作为主色
+@text-color: #4a4a4a; // 主文本颜色
+@text-color-secondary: #6b778c; // 次级文本
+@border-color-base: #dfe1e6; // 边框颜色
+@layout-header-background: #fff; // 保持头部白色
+@layout-sider-background: #f8f9fa; // 浅灰色侧边栏
+@menu-bg: @layout-sider-background; // 菜单背景色
+@menu-item-color: @text-color; // 菜单文字颜色
+@menu-item-active-bg: #e9ecef; // 菜单激活背景
+@menu-highlight-color: @primary-color; // 菜单高亮颜色
+
+// 全局样式调整
+.ant-layout {
+    background: #f5f6fa; // 整体背景色
+}
+
+// 卡片样式优化
+.ant-card {
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+// 按钮样式微调
+.ant-btn-primary {
+    text-shadow: none;
+    box-shadow: none;
+}

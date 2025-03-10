@@ -1,0 +1,63 @@
+.container {
+    background: #FFF3E0;
+    padding: 40px 24px;
+    border-radius: 12px;
+    position: relative;
+}
+
+.title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 48px;
+}
+
+.titleHighlight {
+    color: #FFB74D;
+}
+
+.uploadDragger {
+    background: #fff;
+    border-color: #FFE0B2 !important;
+    max-width: 800px;
+    margin: 0 auto 48px;
+}
+
+.uploadDragger :global(.ant-upload-drag-icon) {
+    font-size: 48px;
+    color: #FFB74D;
+}
+
+.uploadText {
+    color: #666;
+}
+
+.featuresRow {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.featuresCard {
+    text-align: center;
+    height: 100%;
+}
+
+.iconAccent {
+    font-size: 32px;
+    color: #FFB74D;
+}
+
+.languageButton {
+    margin: 4px;
+}
+
+.actionButtonWrap {
+    text-align: center;
+    margin-top: 48px;
+}
+
+.actionButton {
+    background: #FFB74D;
+    border-color: #FFB74D !important;
+    padding: 0 40px;
+    height: 48px;
+}

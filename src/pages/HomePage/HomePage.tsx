@@ -3,6 +3,7 @@ import Header from './Header/Header';
 import './HomePage.css'
 import ScrollIndicator from './ScrollIndicator/ScrollIndicator';
 import MeetingScheduler from './MeetingScheduler/MeetingScheduler';
+import AudioVideoUploader from './AudioVideoUploader/AudioVideoUploader';
 
 // 定义 Section 配置类型
 interface SectionConfig {
@@ -115,10 +116,7 @@ const HomePage: React.FC = () => {
             </section>
 
             <section key="upload" className="fullscreen-section" id="upload" style={{ backgroundColor: '#fff' }}>
-                <div className="section-content">
-                    <h2>文件上传</h2>
-                    <div className="placeholder-box" style={{ height: '300px' }} />
-                </div>
+                <AudioVideoUploader />
             </section>
         </div>
     );
