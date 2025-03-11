@@ -78,6 +78,7 @@
         background-size: cover;
         opacity: 1;
         z-index: -1;
+        pointer-events: none;
     }
 
     .fullscreen-section#schedule {

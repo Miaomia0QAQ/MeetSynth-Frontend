@@ -1,0 +1,96 @@
+/* HitechButton.module.css */
+.button {
+    position: relative;
+    padding: 1.5rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg,
+            #00ffff 0%,
+            #0066ff 50%,
+            #ae00ff 100%);
+    color: white;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    transform: translateZ(0);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.4),
+        0 0 60px rgba(0, 102, 255, 0.2);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0.1) 100%);
+    opacity: 0;
+    animation: glowMove 3s infinite linear;
+}
+
+@keyframes glowMove {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.button:hover .glow {
+    opacity: 0.6;
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* 添加边框动画 */
+/* .button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(45deg,
+            #00ffff,
+            #5900ff);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: borderRotate 3s linear infinite;
+} */
+
+/* @keyframes borderRotate {
+    100% {
+        transform: rotate(1turn);
+    }
+} */
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+}

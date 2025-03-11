@@ -4,9 +4,19 @@
     position: relative;
 
     .audio-uploader-title {
+        font-size: 34px;
         text-align: center;
         color: #333;
         margin-bottom: 48px;
+        transform: translateY(-10px);
+        opacity: 0;
+        transition: all 0.5s;
+        transition-delay: 0.5s;
+    }
+
+    .audio-uploader-title.animate-in {
+        transform: translateY(0);
+        opacity: 1;
     }
 
     .title-highlight {

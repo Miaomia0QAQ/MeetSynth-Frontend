@@ -4,6 +4,7 @@ import './HomePage.css'
 import ScrollIndicator from './ScrollIndicator/ScrollIndicator';
 import MeetingScheduler from './MeetingScheduler/MeetingScheduler';
 import AudioVideoUploader from './AudioVideoUploader/AudioVideoUploader';
+import QuickStart from './QuickStart/QuickStart';
 
 // 定义 Section 配置类型
 interface SectionConfig {
@@ -105,10 +106,7 @@ const HomePage: React.FC = () => {
             </section>
 
             <section key="quick" className="fullscreen-section" id="quick">
-                <div className="section-content">
-                    <h2>快速开始会议</h2>
-                    <div className="placeholder-box" style={{ height: '300px' }} />
-                </div>
+                <QuickStart />
             </section>
 
             <section key="schedule" className="fullscreen-section" id="schedule">

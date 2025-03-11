@@ -1,0 +1,93 @@
+.quick-start-container {
+    position: relative;
+    width: 1122px;
+    height: 420px;
+    border-radius: 15px;
+    padding: 60px;
+    margin: 15vh auto;
+    text-align: center;
+    background: url('../../../assets/O1CN01AD5AJy1OFCR2bDrdg_!!6000000001675-2-tps-2244-840.png');
+    background-size: cover;
+    border: 1px solid rgba(156, 156, 156, 0.523);
+    color: white;
+    display: flex;
+
+    .left-panel {
+        flex: 1;
+        text-align: left;
+
+        .title-container {
+            margin-left: 80px;
+            text-align: left;
+
+            .title {
+                margin-bottom: 10px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        .start-button {
+            margin-top: 100px;
+            margin-left: 80px;
+
+            .animate-pulse {
+                transform: translate(0, 4px);
+            }
+
+            .animate-hover {
+                animation: rocketLaunch 3s ease-in-out forwards;
+            }
+        }
+    }
+
+    .right-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+}
+
+@keyframes rocketLaunch {
+    0% {
+        transform: translate(0, 4px) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    10% {
+        transform: translate(0, 4px) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    50% {
+        /* 向右上发射并消失 */
+        transform: translate(120px, -120px);
+        opacity: 0;
+        filter: brightness(3);
+    }
+
+    51% {
+        /* 瞬间移动到左下起始位置（保持透明） */
+        transform: translate(-20px, 20px);
+        opacity: 0;
+        filter: brightness(0.5);
+    }
+
+    80% {
+        /* 从左下逐渐显现并返回原位 */
+        transform: translate(0, 4px);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    100% {
+        transform: translate(0, 4px);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}

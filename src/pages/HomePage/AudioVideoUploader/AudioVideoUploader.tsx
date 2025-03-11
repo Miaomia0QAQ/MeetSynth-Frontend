@@ -1,7 +1,7 @@
-import { Upload, Card, Typography, Button, Row, Col, Carousel } from 'antd';
+import { Upload, Card, Typography, Button } from 'antd';
 import { InboxOutlined, CheckCircleFilled } from '@ant-design/icons';
 import './AudioVideoUploader.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { Dragger } = Upload;
 const { Title, Text } = Typography;
@@ -23,10 +23,10 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
     return (
         <div className="audio-uploader-container">
             {/* 标题部分 */}
-            <Title level={2} className="audio-uploader-title">
+            <h2 className={`audio-uploader-title ${isAnimateIn ? 'animate-in' : ''}`}>
                 <span className="title-highlight">导入音视频</span>
                 #录音转文字更高效
-            </Title>
+            </h2>
 
             <div className="cardListContainer">
                 {/* 卡片1 - 准确度高 */}
