@@ -38,7 +38,7 @@ const HomePage: React.FC = () => {
         if (!target || !container) return;
 
         setIsScrolling(true);
-        setActiveSection(targetId)
+        setActiveSection(targetId);
 
         target.scrollIntoView({ behavior: "smooth" })
 
@@ -106,6 +106,9 @@ const HomePage: React.FC = () => {
             </section>
 
             <section key="quick" className="fullscreen-section" id="quick">
+                <h2 className={`quick-start-title ${activeSection === 'quick' ? 'animate-in' : ''}`}>
+                    快速开始会议
+                </h2>
                 <QuickStart />
             </section>
 

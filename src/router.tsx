@@ -6,6 +6,7 @@ import AdminLayout from "./pages/AdminLayout/AdminLayout";
 import Dashboard from "./pages/AdminLayout/Dashboard/Dashboard";
 import Users from "./pages/AdminLayout/Users/Users";
 import { ConfigProvider } from "antd";
+import MeetingAdmin from "./pages/AdminLayout/MeetingAdmin/MeetingAdmin";
 
 const adminTheme = {
     token: {
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
         element: <LoginPage />,
     },
     {
-        path: '/meeting', // 会议页面相对地址
+        path: '/meeting',
         element: <MeetingLayout />,
     },
     {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
                 path: 'users',
                 element: <Users />,
             },
+            {
+                path: 'meeting',
+                element: <MeetingAdmin />
+            }
             // {
             //   path: 'meetings',
             //   element: <Meetings />,

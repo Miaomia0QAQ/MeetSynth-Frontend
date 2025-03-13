@@ -12,16 +12,16 @@ import { AIIcon } from '../../../component/Icons';
 import { Tooltip } from 'antd';
 
 interface SidebarProps {
-    isCollapsed: boolean;
+    handleSummarize: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
+const Sidebar: React.FC<SidebarProps> = ({ handleSummarize }) => {
     return (
-        <nav className={`meeting-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+        <nav className="meeting-sidebar">
             {/* 原有侧边栏内容保持不变 */}
             <div className="btn-group">
                 <Tooltip title="AI总结" placement="left">
-                    <button className="nav-btn">
+                    <button className="nav-btn" onClick={handleSummarize}>
                         <AIIcon color='currentColor' className="icon" />
                     </button>
                 </Tooltip>

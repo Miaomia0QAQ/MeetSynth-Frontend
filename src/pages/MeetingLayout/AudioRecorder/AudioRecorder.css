@@ -1,0 +1,88 @@
+.audio-recorder-container {
+    max-width: 500px;
+    width: 500px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.waveform {
+    margin-bottom: 1.5rem;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.record-button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: #ff5f5f;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.record-button.recording {
+    animation: pulse 1.5s infinite;
+}
+
+.mic-icon {
+    width: 24px;
+    height: 24px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.control-button {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f0f0f0;
+}
+
+.control-button:hover {
+    background: #e0e0e0;
+}
+
+.control-button.play {
+    background: #6c63ff;
+    color: white;
+}
+
+.control-button.play:hover {
+    background: #5a52e0;
+}
+
+.control-button.delete:hover {
+    background: #ffcccc;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
