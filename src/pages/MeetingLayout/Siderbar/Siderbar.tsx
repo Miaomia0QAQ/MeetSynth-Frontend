@@ -13,9 +13,10 @@ import { Tooltip } from 'antd';
 
 interface SidebarProps {
     handleSummarize: () => void;
+    handleInfoModalOpen: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ handleSummarize }) => {
+const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen }) => {
     return (
         <nav className="meeting-sidebar">
             {/* 原有侧边栏内容保持不变 */}
@@ -36,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSummarize }) => {
 
             <div className="btn-group">
                 <Tooltip title="编辑" placement="left">
-                    <button className="nav-btn">
+                    <button className="nav-btn" onClick={handleInfoModalOpen}>
                         <FontAwesomeIcon icon={faPenToSquare} className="icon" />
                     </button>
                 </Tooltip>

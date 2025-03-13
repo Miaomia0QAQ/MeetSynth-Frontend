@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined, HomeFilled, LeftCircleOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
 import './MeetingLayout.css';
-import { Avatar, Button, message, Splitter } from 'antd';
+import { Avatar, Button, Modal, Splitter } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import AISummary, { AISummaryRef } from './AISummary/AISummary';
 import { DeepseekIcon } from '../../component/Icons';
@@ -46,17 +46,30 @@ const defaultTranscripts = [
   }
 ]
 const MeetingLayout = () => {
+  // 会议id
   const [id, setId] = useState<string>('');
+  // 会议标题
   const [title, setTitle] = useState<string>('第23届联合国大会');
+  // 会议内容是否存在
   const [hasContent, setHasContent] = useState<boolean>(false);
-  const [isRightPanel, setIsRightPanel] = useState<boolean>(false);
+  // 录音转文字内容
   const [transcripts, setTranscripts] = useState(defaultTranscripts);
+  // 用户编辑内容
   const [editingContent, setEditingContent] = useState('');
+  // 左右版块大小
+  const [panelSize, setPanelSize] = useState<(number | string)[]>(['100%', '0%']);
+
+  // 下面是模态框相关状态
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
   const summaryRef = useRef<AISummaryRef>(null)
 
   // AI总结事件
   const handleSummarize = () => {
-    setIsRightPanel(true);
+    if (panelSize[1] !== '0%' && panelSize[1] !== 0 && panelSize[1] !== '0') {
+      return;
+    }
+    setPanelSize(['50%', '50%']);
   }
 
   // 处理编辑内容
@@ -92,10 +105,27 @@ const MeetingLayout = () => {
     }
   }
 
+  // 删除录音内容
   const handleDelete = (id: string) => {
     setTranscripts(prev => prev.filter(item => item.id !== id))
   }
 
+  // 处理信息模态框的打开事件
+  const handleInfoModalOpen = () => {
+    setIsInfoModalOpen(prev => !prev);
+  }
+
+  // 处理信息模态框的关闭事件
+  const handleInfoModalCancel = () => {
+    setIsInfoModalOpen(false);
+  }
+
+  // 处理信息模态框的提交事件
+  const handleInfoModalOk = () => {
+    setIsInfoModalOpen(false);
+  }
+
+  // 渲染
   return (
     <div className="meeting-background">
       <div className="meeting-container">
@@ -108,14 +138,18 @@ const MeetingLayout = () => {
             <div className="header-content">
               <div className="date-box">2024/03/02</div>
             </div>
-            <div className="menu-button" onClick={() => setIsRightPanel(prev => !prev)}>
+            <div className="menu-button">
               <LeftCircleOutlined style={{ fontSize: '36px', color: '#A3AAF2' }} />
             </div>
           </header>
 
           {/* 主要内容 */}
-          <Splitter className="main-content">
-            <Splitter.Panel className={`left-panel ${hasContent ? 'has-content' : ''}`}>
+          <Splitter
+            className="main-content"
+            lazy
+            onResize={setPanelSize}
+          >
+            <Splitter.Panel className={`left-panel ${hasContent ? 'has-content' : ''}`} size={panelSize[0]}>
               <h1 className='meeting-title'>
                 {title}
               </h1>
@@ -172,11 +206,11 @@ const MeetingLayout = () => {
               </div>
 
               <div className="recording-control">
-                <AudioRecorder />
+                <AudioRecorder onEdit={onTranscriptEdit} />
               </div>
             </Splitter.Panel>
 
-            <Splitter.Panel className="right-panel" collapsible={true} defaultSize={0}>
+            <Splitter.Panel className="right-panel" collapsible={true} size={panelSize[1]}>
               <div className='summary-header'>
                 <div className="icon-box">
                   <DeepseekIcon />
@@ -190,8 +224,16 @@ const MeetingLayout = () => {
         </div >
 
         {/* 侧边栏菜单 */}
-        < Sidebar handleSummarize={handleSummarize} />
+        < Sidebar handleSummarize={handleSummarize} handleInfoModalOpen={handleInfoModalOpen} />
       </div >
+
+      {/* 会议信息模态框 */}
+      <Modal title="会议信息" open={isInfoModalOpen} onCancel={handleInfoModalCancel} onOk={handleInfoModalOk}>
+        <p>会议名称：{title}</p>
+        <p>会议时间：2024/03/02</p>
+        <p>会议地点：Zoom</p>
+      </Modal>
+
     </div >
   );
 };

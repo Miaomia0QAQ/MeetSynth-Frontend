@@ -1,88 +1,70 @@
-.audio-recorder-container {
-    max-width: 500px;
-    width: 500px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.waveform {
-    margin-bottom: 1.5rem;
-}
-
-.controls {
+.audio-recorder {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
+    padding: 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-.record-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: none;
-    background: #ff5f5f;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.record-button.recording {
-    animation: pulse 1.5s infinite;
-}
-
-.mic-icon {
-    width: 24px;
-    height: 24px;
-    color: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.control-button {
-    width: 48px;
-    height: 48px;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #f0f0f0;
-}
-
-.control-button:hover {
-    background: #e0e0e0;
-}
-
-.control-button.play {
-    background: #6c63ff;
-    color: white;
-}
-
-.control-button.play:hover {
-    background: #5a52e0;
-}
-
-.control-button.delete:hover {
-    background: #ffcccc;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
+    .progress-bar-container {
+        position: relative;
+        width: 100px;
+        height: 20px;
+        background: #eee;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        overflow: hidden;
     }
 
-    50% {
-        transform: scale(1.1);
+    .progress-bar {
+        height: 100%;
+        background: #2196f3;
+        transition: width 0.3s ease;
     }
 
-    100% {
-        transform: scale(1);
+    .time-display {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #fff;
+        font-size: 12px;
+        z-index: 1;
+    }
+
+    .controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    .control-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 20px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .control-button:hover {
+        background: #e0e0e0;
+    }
+
+    .start {
+        color: #2196f3;
+    }
+
+    .pause {
+        color: #ff9800;
+    }
+
+    .stop {
+        color: #f44336;
+    }
+
+    .edit {
+        color: #4caf50;
     }
 }
