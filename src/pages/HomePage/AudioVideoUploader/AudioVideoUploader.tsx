@@ -48,7 +48,7 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
                 </div>
 
                 {/* 卡片3 - 拖拽上传 */}
-                <div key="language" className={`cardListItem ${isAnimateIn ? 'animate-in' : ''}`}>
+                <div key="dargger" className={`cardListItem ${isAnimateIn ? 'animate-in' : ''}`}>
                     <Card
                         className="featuresCard"
                         style={{
@@ -82,7 +82,7 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
                 </div>
 
                 {/* 卡片4 - 智能识别 */}
-                <div key="speed" className={`cardListItem ${isAnimateIn ? 'animate-in' : ''}`}>
+                <div key="recognize" className={`cardListItem ${isAnimateIn ? 'animate-in' : ''}`}>
                     <Card className="featuresCard">
                         <CheckCircleFilled className="iconAccent" />
                         <Title level={4} style={{ margin: '16px 0', color: 'white' }}>智能识别</Title>

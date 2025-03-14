@@ -3,20 +3,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileArrowUp,
     faFileLines,
-    faCog,
     faUser,
     faPenToSquare
 } from '@fortawesome/free-solid-svg-icons';
 import './Siderbar.css';
 import { AIIcon } from '../../../component/Icons';
 import { Tooltip } from 'antd';
+import SettingsButton from '../SettingsButton/SettingsButton';
 
 interface SidebarProps {
     handleSummarize: () => void;
     handleInfoModalOpen: () => void;
+    handleUploadModalOpen: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen, handleUploadModalOpen }) => {
     return (
         <nav className="meeting-sidebar">
             {/* 原有侧边栏内容保持不变 */}
@@ -36,21 +37,17 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen 
             <div className="divider" />
 
             <div className="btn-group">
-                <Tooltip title="编辑" placement="left">
+                <Tooltip title="编辑会议信息" placement="left">
                     <button className="nav-btn" onClick={handleInfoModalOpen}>
                         <FontAwesomeIcon icon={faPenToSquare} className="icon" />
                     </button>
                 </Tooltip>
                 <Tooltip title="上传文件" placement="left">
-                    <button className="nav-btn">
+                    <button className="nav-btn" onClick={handleUploadModalOpen}>
                         <FontAwesomeIcon icon={faFileArrowUp} className="icon" />
                     </button>
                 </Tooltip>
-                <Tooltip title="设置" placement="left">
-                    <button className="nav-btn">
-                        <FontAwesomeIcon icon={faCog} className="icon" />
-                    </button>
-                </Tooltip>
+                <SettingsButton />
                 <Tooltip title="用户" placement="left">
                     <button className="nav-btn">
                         <FontAwesomeIcon icon={faUser} className="icon" />
@@ -58,18 +55,6 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen 
                 </Tooltip>
             </div>
         </nav>
-    );
-};
-
-interface NavButtonProps {
-    icon: any;
-}
-
-const NavButton: React.FC<NavButtonProps> = ({ icon }) => {
-    return (
-        <button className="nav-btn">
-            <FontAwesomeIcon icon={icon} className="icon" />
-        </button>
     );
 };
 

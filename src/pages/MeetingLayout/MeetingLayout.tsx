@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined, HomeFilled, LeftCircleOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
 import './MeetingLayout.css';
 import { Avatar, Button, Modal, Splitter } from 'antd';
@@ -7,6 +7,8 @@ import AISummary, { AISummaryRef } from './AISummary/AISummary';
 import { DeepseekIcon } from '../../component/Icons';
 import Sidebar from './Siderbar/Siderbar';
 import AudioRecorder from './AudioRecorder/AudioRecorder';
+import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
+import UploadModal from './UploadModal/UploadModal';
 
 const defaultTranscripts = [
   {
@@ -59,9 +61,13 @@ const MeetingLayout = () => {
   // 左右版块大小
   const [panelSize, setPanelSize] = useState<(number | string)[]>(['100%', '0%']);
 
-  // 下面是模态框相关状态
+  /*
+   下面是模态框相关状态
+  */
+  // 信息模态框开关状态
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-
+  // 上传模态框开关状态
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const summaryRef = useRef<AISummaryRef>(null)
 
   // AI总结事件
@@ -110,9 +116,12 @@ const MeetingLayout = () => {
     setTranscripts(prev => prev.filter(item => item.id !== id))
   }
 
+  /*
+    下面是模态框的事件处理函数
+  */
   // 处理信息模态框的打开事件
   const handleInfoModalOpen = () => {
-    setIsInfoModalOpen(prev => !prev);
+    setIsInfoModalOpen(true);
   }
 
   // 处理信息模态框的关闭事件
@@ -123,6 +132,21 @@ const MeetingLayout = () => {
   // 处理信息模态框的提交事件
   const handleInfoModalOk = () => {
     setIsInfoModalOpen(false);
+  }
+
+  // 处理上传模态框的打开事件
+  const handleUploadModalOpen = () => {
+    setIsUploadModalOpen(true);
+  }
+
+  // 处理上传模态框的关闭事件
+  const handleUploadModalCancel = () => {
+    setIsUploadModalOpen(false);
+  }
+
+  // 处理上传模态框的提交事件
+  const handleUploadModalOk = () => {
+    setIsUploadModalOpen(false);
   }
 
   // 渲染
@@ -224,15 +248,25 @@ const MeetingLayout = () => {
         </div >
 
         {/* 侧边栏菜单 */}
-        < Sidebar handleSummarize={handleSummarize} handleInfoModalOpen={handleInfoModalOpen} />
+        <Sidebar
+          handleSummarize={handleSummarize}
+          handleInfoModalOpen={handleInfoModalOpen}
+          handleUploadModalOpen={handleUploadModalOpen}
+        />
       </div >
 
       {/* 会议信息模态框 */}
-      <Modal title="会议信息" open={isInfoModalOpen} onCancel={handleInfoModalCancel} onOk={handleInfoModalOk}>
-        <p>会议名称：{title}</p>
-        <p>会议时间：2024/03/02</p>
-        <p>会议地点：Zoom</p>
-      </Modal>
+      <MeetingInfoModal
+        isOpen={isInfoModalOpen}
+        onCancel={handleInfoModalCancel}
+        onOk={handleInfoModalOk}
+      />
+
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onCancel={handleUploadModalCancel}
+        onOk={handleUploadModalOk}
+      />
 
     </div >
   );

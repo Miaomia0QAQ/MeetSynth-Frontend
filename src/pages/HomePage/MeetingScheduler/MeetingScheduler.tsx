@@ -52,6 +52,8 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
             })
         }
     }, [isAnimateIn]);
+
+    // 处理表单提交
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Meeting Scheduled:', formData);
@@ -86,12 +88,12 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
 
                 <form className="form-container" onSubmit={handleSubmit}>
                     {[
-                        { label: '会议标题', name: 'title', type: 'text', required: true },
-                        { label: '负责人', name: 'leader', type: 'text', required: true },
+                        { label: '会议标题', name: 'title', type: 'text', required: false },
+                        { label: '负责人', name: 'leader', type: 'text', required: false },
                         { label: '参与人', name: 'participants', type: 'text', placeholder: '张三, 李四, 王五' },
-                        { label: '开始时间', name: 'startTime', type: 'datetime-local', required: true },
+                        { label: '开始时间', name: 'startTime', type: 'datetime-local', required: false },
                         { label: '上传文件', name: 'files', type: 'file' },
-                        { label: '会议简述', name: 'description', type: 'textarea', required: true },
+                        { label: '会议简述', name: 'description', type: 'textarea', required: false },
                     ].map((field, index) => (
                         field.type === 'textarea' ? (
                             <div
