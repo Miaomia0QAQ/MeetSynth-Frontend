@@ -8,6 +8,9 @@ import Users from "./pages/AdminLayout/Users/Users";
 import { ConfigProvider } from "antd";
 import MeetingAdmin from "./pages/AdminLayout/MeetingAdmin/MeetingAdmin";
 import UserCenter from "./pages/UserCenter/UserCenter";
+import MyMeetings from "./pages/UserCenter/MyMeetings/MyMeetings";
+import AccountManage from "./pages/UserCenter/AccountManage/AccountManage";
+import AvatarManage from "./pages/UserCenter/AvatarManage/AvatarManage";
 
 const adminTheme = {
     token: {
@@ -77,6 +80,24 @@ const router = createBrowserRouter([
     {
         path: '/userCenter',
         element: <UserCenter />,
+        children: [
+            {
+                index: true,
+                element: <AccountManage />,
+            },
+            {
+                path: 'info/account',
+                element: <AccountManage />,
+            },
+            {
+                path: 'info/avatar',
+                element: <AvatarManage />,
+            },
+            {
+                path: 'meetings',
+                element: <MyMeetings />
+            }
+        ]
     }
 ])
 

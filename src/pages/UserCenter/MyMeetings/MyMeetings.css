@@ -1,0 +1,199 @@
+/* my-meetings.css */
+:root {
+    --primary-color: #5A7F9E;
+    --secondary-color: #9DB4C7;
+    --light-bg: #F3F6F8;
+    --text-dark: #34495E;
+    --text-medium: #5D6D7E;
+    --text-light: #85929E;
+    --success-color: #27AE60;
+    --error-color: #E74C3C;
+    --border-color: #D6E1E6;
+}
+
+/* 基础容器 */
+.mymeetings-container {
+    padding: 20px;
+    height: 100%;
+
+    /* 操作栏 */
+    .action-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    /* 按钮样式 */
+    .record-btn {
+        border-radius: 20px;
+        padding: 8px 20px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .record-btn.dark {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .record-btn.dark:hover {
+        background: #2E6580;
+        border-color: #2E6580;
+    }
+
+    .record-btn.light {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--primary-color);
+    }
+
+    .record-btn.light:hover {
+        background: #E0E8EC;
+        color: #2E6580;
+    }
+
+    /* 搜索框 */
+    .search-input {
+        width: 300px;
+        border-radius: 20px;
+        transition: all 0.3s;
+    }
+
+    .search-input .ant-input {
+        border-radius: 20px;
+        padding: 8px 15px;
+        border-color: var(--border-color);
+    }
+
+    .search-input .ant-input:hover,
+    .search-input .ant-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(58, 123, 158, 0.1);
+    }
+
+    /* 会议列表项 */
+    .meeting-item {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
+    }
+
+    .meeting-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    /* 会议内容布局 */
+    .meeting-content {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        gap: 20px;
+    }
+
+    .left-info {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .meeting-title {
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .meeting-desc {
+        color: var(--text-medium);
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* 右侧信息网格 */
+    .right-info {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 8px 20px;
+        font-size: 14px;
+        min-width: 240px;
+    }
+
+    .info-grid span:nth-child(odd) {
+        color: var(--text-light);
+        white-space: nowrap;
+    }
+
+    .info-grid span:nth-child(even) {
+        color: var(--text-medium);
+        font-weight: 500;
+    }
+
+    /* 操作按钮 */
+    .action-btns {
+        display: flex;
+        gap: 12px;
+    }
+
+    .enter-btn {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        border-radius: 8px;
+        padding: 6px 15px;
+        transition: all 0.2s;
+    }
+
+    .enter-btn:hover {
+        background: #2E6580;
+        border-color: #2E6580;
+        color: white;
+    }
+
+    .delete-btn {
+        background: var(--light-bg);
+        border-color: var(--border-color);
+        color: var(--text-medium);
+    }
+
+    .delete-btn:hover {
+        background: var(--error-color);
+        border-color: var(--error-color);
+        color: white;
+    }
+
+    /* 状态标签 */
+    .ant-tag {
+        border-radius: 4px;
+        font-size: 12px;
+        padding: 2px 8px;
+    }
+
+    .ant-tag-green {
+        background: #e8f5e9 !important;
+        border-color: #a5d6a7 !important;
+        color: #2e7d32 !important;
+    }
+
+    .ant-tag-blue {
+        background: #e3f2fd !important;
+        border-color: #90caf9 !important;
+        color: #1565c0 !important;
+    }
+}

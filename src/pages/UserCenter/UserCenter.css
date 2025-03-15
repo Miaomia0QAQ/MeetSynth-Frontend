@@ -1,0 +1,79 @@
+.user-layout-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #ebeded;
+}
+
+.side-menu {
+    width: 240px;
+    height: 100vh;
+    background-color: #ebeded;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+}
+
+.logo-box {
+    height: 60px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-item {
+    margin-bottom: 20px;
+}
+
+.menu-item .title {
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.menu-link {
+    display: block;
+    padding: 12px 20px;
+    color: #666;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.menu-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.menu-link.active {
+    background-color: #fff;
+    color: #333;
+    font-weight: 500;
+}
+
+.sub-menu {
+    padding-left: 20px;
+}
+
+.sub-menu .menu-link {
+    padding-left: 30px;
+    font-size: 14px;
+}
+
+.content-area {
+    flex: 1;
+    margin: 40px 40px 40px 0;
+    border-radius: 50px;
+    padding: 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+    background-color: #f5f9fc;
+}

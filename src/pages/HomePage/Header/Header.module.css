@@ -45,7 +45,10 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #4a4a4a;
+    background: #9c9c9c;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
