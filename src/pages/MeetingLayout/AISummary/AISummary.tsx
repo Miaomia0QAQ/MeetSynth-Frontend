@@ -7,8 +7,10 @@ import {
     ForwardedRef
 } from 'react'
 import './AISummary.css'
-import MarkdownRenderer from '../../../component/MarkdownRenderer/MarkdownRenderer'
+import MarkdownRenderer from './MarkdownRenderer/MarkdownRenderer'
 import request from '../../../utils/request'
+import MarkdownEditor from './MarkdownEditor/MarkdownEditor'
+import React from 'react'
 
 export interface AISummaryRef {
     sendRequest: (content: string) => void
@@ -18,6 +20,16 @@ interface AISummaryProps {
     // 可扩展的props接口
 }
 
+type isEditContextType = {
+    isEdit: boolean,
+    setIsEdit: (value: boolean) => void
+};
+
+export const isEditContext = React.createContext<isEditContextType>({
+    isEdit: false,
+    setIsEdit: () => { }
+});
+
 const AISummary = forwardRef((
     props: AISummaryProps,
     ref: ForwardedRef<AISummaryRef>
@@ -26,6 +38,7 @@ const AISummary = forwardRef((
     const [error, setError] = useState<string | null>(null)
     const [summary, setSummary] = useState<string>('')
     const eventSourceRef = useRef<EventSource | null>(null)
+    const [isEdit, setIsEdit] = useState(false);
 
     // 暴露方法给父组件
     useImperativeHandle(ref, () => ({
@@ -113,11 +126,16 @@ const AISummary = forwardRef((
             {error && <div className="error-message">{error}</div>}
 
             {/* 总结内容显示 */}
-            {summary && (
-                <div className="summary-content">
-                    <MarkdownRenderer content={summary} />
-                </div>
-            )}
+            <div className="summary-content">
+                {isEdit ?
+                    <MarkdownEditor value={summary} onChange={setSummary} setIsEdit={setIsEdit} />
+                    :
+                    <isEditContext.Provider value={{ isEdit, setIsEdit }}>
+                        <MarkdownRenderer content={summary} />
+                    </isEditContext.Provider>
+                }
+            </div>
+
         </div>
     )
 })

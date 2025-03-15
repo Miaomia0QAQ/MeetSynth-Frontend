@@ -9,7 +9,7 @@ import {
 import './Siderbar.css';
 import { AIIcon } from '../../../component/Icons';
 import { Tooltip } from 'antd';
-import SettingsButton from '../SettingsButton/SettingsButton';
+import SettingsButton from './SettingsButton/SettingsButton';
 
 interface SidebarProps {
     handleSummarize: () => void;

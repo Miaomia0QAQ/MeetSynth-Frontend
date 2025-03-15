@@ -9,6 +9,7 @@ import Sidebar from './Siderbar/Siderbar';
 import AudioRecorder from './AudioRecorder/AudioRecorder';
 import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
+import { useNavigate } from 'react-router-dom';
 
 const defaultTranscripts = [
   {
@@ -60,7 +61,6 @@ const MeetingLayout = () => {
   const [editingContent, setEditingContent] = useState('');
   // 左右版块大小
   const [panelSize, setPanelSize] = useState<(number | string)[]>(['100%', '0%']);
-
   /*
    下面是模态框相关状态
   */
@@ -68,14 +68,14 @@ const MeetingLayout = () => {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   // 上传模态框开关状态
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const summaryRef = useRef<AISummaryRef>(null)
+  const summaryRef = useRef<AISummaryRef>(null);
+  const navigate = useNavigate();
 
   // AI总结事件
   const handleSummarize = () => {
-    if (panelSize[1] !== '0%' && panelSize[1] !== 0 && panelSize[1] !== '0') {
-      return;
+    if (panelSize[1] === '0%' || panelSize[1] === 0 || panelSize[1] === '0') {
+      setPanelSize(['50%', '50%']);
     }
-    setPanelSize(['50%', '50%']);
   }
 
   // 处理编辑内容
@@ -156,7 +156,7 @@ const MeetingLayout = () => {
         <div className="main-container">
           {/* 顶部标题栏 */}
           <header className="header">
-            <div className="logo">
+            <div className="logo" onClick={() => navigate('/')}>
               <HomeFilled style={{ fontSize: '30px', color: '#A3AAF2' }} />
             </div>
             <div className="header-content">
@@ -235,12 +235,6 @@ const MeetingLayout = () => {
             </Splitter.Panel>
 
             <Splitter.Panel className="right-panel" collapsible={true} size={panelSize[1]}>
-              <div className='summary-header'>
-                <div className="icon-box">
-                  <DeepseekIcon />
-                </div>
-                <Button type='primary' onClick={handleSummarize}>生成总结</Button>
-              </div>
               <AISummary ref={summaryRef} />
             </Splitter.Panel>
 

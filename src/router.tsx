@@ -7,6 +7,7 @@ import Dashboard from "./pages/AdminLayout/Dashboard/Dashboard";
 import Users from "./pages/AdminLayout/Users/Users";
 import { ConfigProvider } from "antd";
 import MeetingAdmin from "./pages/AdminLayout/MeetingAdmin/MeetingAdmin";
+import UserCenter from "./pages/UserCenter/UserCenter";
 
 const adminTheme = {
     token: {
@@ -66,16 +67,16 @@ const router = createBrowserRouter([
             {
                 path: 'meeting',
                 element: <MeetingAdmin />
-            }
-            // {
-            //   path: 'meetings',
-            //   element: <Meetings />,
-            // },
+            },
             // {
             //   path: 'permissions',
             //   element: <Permissions />,
             // },
         ],
+    },
+    {
+        path: '/userCenter',
+        element: <UserCenter />,
     }
 ])
 
