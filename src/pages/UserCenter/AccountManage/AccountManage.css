@@ -1,0 +1,90 @@
+/* 继承主色调 */
+.account-container {
+    padding: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+
+
+    .account-section {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 12px rgba(58, 123, 158, 0.08);
+        border: 1px solid #e6f0f3;
+    }
+
+    .section-title {
+        color: #2C3E50;
+        font-size: 18px;
+        margin: 20px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #3A7B9E;
+    }
+
+    .profile-info {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .profile-avatar {
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-detail {
+        flex: 1;
+    }
+
+    .username {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2C3E50;
+    }
+
+    .meeting-count {
+        margin-top: 12px;
+        color: #5A6B7D;
+        font-size: 14px;
+    }
+
+    .security-list .ant-list-item {
+        padding: 16px 0;
+        border-bottom: 1px solid #EBF0F3 !important;
+    }
+
+    .security-list .ant-list-item-meta-title {
+        color: #3A7B9E;
+        font-weight: 500;
+    }
+
+    .security-list .ant-list-item-meta-description {
+        color: #5A6B7D;
+    }
+
+    /* 危险区域样式 */
+    .danger-zone {
+        background: #FEF5F5;
+        border: 1px solid #E74C3C;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .danger-zone .section-title {
+        color: #E74C3C;
+        border-bottom-color: #E74C3C;
+    }
+
+    .delete-account-btn {
+        width: 200px;
+        height: 40px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+}

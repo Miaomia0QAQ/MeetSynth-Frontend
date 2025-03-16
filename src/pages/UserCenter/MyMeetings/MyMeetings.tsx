@@ -34,7 +34,7 @@ const MyMeetings = () => {
             icon={<AudioOutlined />}
             className="record-btn dark"
           >
-            实时录音
+            创建会议
           </Button>
           <Button 
             icon={<UploadOutlined />}

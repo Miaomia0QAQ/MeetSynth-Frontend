@@ -24,7 +24,15 @@ const UserCenter = () => {
                   `menu-link ${isActive ? 'active' : ''}`
                 }
               >
-                修改头像
+                更换头像
+              </NavLink>
+              <NavLink 
+                to="/userCenter/password"
+                className={({ isActive }) => 
+                  `menu-link ${isActive ? 'active' : ''}`
+                }
+              >
+                修改密码
               </NavLink>
             </div>
           </li>

@@ -11,6 +11,7 @@ import UserCenter from "./pages/UserCenter/UserCenter";
 import MyMeetings from "./pages/UserCenter/MyMeetings/MyMeetings";
 import AccountManage from "./pages/UserCenter/AccountManage/AccountManage";
 import AvatarManage from "./pages/UserCenter/AvatarManage/AvatarManage";
+import PasswordChange from "./pages/UserCenter/PasswordChange/PasswordChange";
 
 const adminTheme = {
     token: {
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <AccountManage />,
+            },
+            {
+                path: 'password',
+                element: <PasswordChange />,
             },
             {
                 path: 'info/account',
