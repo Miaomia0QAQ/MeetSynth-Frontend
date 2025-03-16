@@ -1,34 +1,36 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import './UserCenter.css';
 
 const UserCenter = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="user-layout-container">
       <nav className="side-menu">
-        <div className="logo-box">MeetSynth</div>
+        <div className="logo-box" onClick={() => navigate('/')}>MeetSynth</div>
         <ul className="menu-list">
           <li className="menu-item">
             <div className="title">个人信息</div>
             <div className="sub-menu">
-              <NavLink 
-                to="/userCenter/info/account" 
-                className={({ isActive }) => 
+              <NavLink
+                to="/userCenter/info/account"
+                className={({ isActive }) =>
                   `menu-link ${isActive ? 'active' : ''}`
                 }
               >
                 账号管理
               </NavLink>
-              <NavLink 
+              <NavLink
                 to="/userCenter/info/avatar"
-                className={({ isActive }) => 
+                className={({ isActive }) =>
                   `menu-link ${isActive ? 'active' : ''}`
                 }
               >
                 更换头像
               </NavLink>
-              <NavLink 
+              <NavLink
                 to="/userCenter/password"
-                className={({ isActive }) => 
+                className={({ isActive }) =>
                   `menu-link ${isActive ? 'active' : ''}`
                 }
               >
@@ -37,9 +39,9 @@ const UserCenter = () => {
             </div>
           </li>
           <li className="menu-item">
-            <NavLink 
+            <NavLink
               to="/userCenter/meetings"
-              className={({ isActive }) => 
+              className={({ isActive }) =>
                 `menu-link ${isActive ? 'active' : ''}`
               }
             >

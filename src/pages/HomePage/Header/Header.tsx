@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
   const items: MenuProps['items'] = [
     {
       label: (
-        <a onClick={() => { navigate('/userCenter') }}>
+        <a onClick={() => { navigate('/userCenter/info/account') }}>
           用户中心
         </a>
       ),

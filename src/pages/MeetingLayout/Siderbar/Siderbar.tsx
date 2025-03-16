@@ -10,6 +10,7 @@ import './Siderbar.css';
 import { AIIcon } from '../../../component/Icons';
 import { Tooltip } from 'antd';
 import SettingsButton from './SettingsButton/SettingsButton';
+import { useNavigate } from 'react-router-dom';
 
 interface SidebarProps {
     handleSummarize: () => void;
@@ -18,6 +19,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen, handleUploadModalOpen }) => {
+    const navigate = useNavigate();
+
     return (
         <nav className="meeting-sidebar">
             {/* 原有侧边栏内容保持不变 */}
@@ -49,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSummarize, handleInfoModalOpen,
                 </Tooltip>
                 <SettingsButton />
                 <Tooltip title="用户" placement="left">
-                    <button className="nav-btn">
+                    <button className="nav-btn" onClick={() => navigate('/userCenter/info/account')}>
                         <FontAwesomeIcon icon={faUser} className="icon" />
                     </button>
                 </Tooltip>
