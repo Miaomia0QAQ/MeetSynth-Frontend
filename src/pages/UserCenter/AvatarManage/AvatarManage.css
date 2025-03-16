@@ -1,0 +1,104 @@
+.avatar-container {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: black;
+
+    .person-right-title {
+        margin-bottom: 20px;
+        color: #7d848bbd;
+    }
+
+    .avatar-box {
+        display: inline-block;
+        padding: 80px 20px 56px;
+
+        .avatar-left {
+            float: left;
+            margin-right: 40px;
+
+            .avatar-file {
+                width: 200px;
+                height: 90px;
+                background-color: rgb(230, 234, 236);
+                margin: 10px 0;
+                border-radius: 4px;
+                color: #5a6267;
+                font-size: 20px;
+                cursor: pointer;
+
+                .file-text {
+                    font-size: 14px;
+                    line-height: 90px;
+                }
+            }
+
+            .avatar-file:hover {
+                background-color: rgb(217, 220, 221);
+            }
+        }
+
+        .divider {
+            float: left;
+            width: 1px;
+            height: 180px;
+            background-color: #a3a3a3;
+            margin-top: 20px;
+            margin-right: 40px;
+        }
+
+        .avatar-right {
+            float: left;
+
+            .avatar-img {
+                width: 96px;
+                height: 96px;
+                border-radius: 50%;
+                background-color: #fff;
+                margin-top: 45px;
+                overflow: hidden;
+
+                img {
+                    width: 100%;
+                }
+            }
+
+            .img-text {
+                margin-top: 20px;
+                font-size: 12px;
+                color: #99a2aa;
+            }
+        }
+    }
+
+    .avatar-text {
+        line-height: 16px;
+        color: #99a2aa;
+    }
+
+    .modal-footer {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .btn-confirm.disabled {
+        background: #f4f5f7;
+        border-color: #f4f5f7;
+        color: #ccd0d7;
+        cursor: auto;
+    }
+
+    .btn-confirm {
+        border: 1px solid #00a1d6;
+        color: #fff;
+        background-color: #00a1d6;
+        display: inline-block;
+        width: 140px;
+        height: 40px;
+        font-size: 14px;
+        line-height: 32px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+}
