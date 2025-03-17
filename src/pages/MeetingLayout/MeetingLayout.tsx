@@ -10,6 +10,7 @@ import AudioRecorder from './AudioRecorder/AudioRecorder';
 import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
 import { useNavigate } from 'react-router-dom';
+import RecorderInput from './RecorderInput/RecorderInput';
 
 const defaultTranscripts = [
   {
@@ -61,6 +62,7 @@ const MeetingLayout = () => {
   const [editingContent, setEditingContent] = useState('');
   // 左右版块大小
   const [panelSize, setPanelSize] = useState<(number | string)[]>(['100%', '0%']);
+  const [recorderState, setRecorderState] = useState<'record' | 'edit'>('record');
   /*
    下面是模态框相关状态
   */
@@ -81,8 +83,15 @@ const MeetingLayout = () => {
   // 处理编辑内容
   const onTranscriptEdit = () => {
     setHasContent(true);
+    setRecorderState('edit');
   };
 
+  // 处理转写内容添加事件
+  const onTranscriptAdd = (transcript: string) => {
+    setTranscripts(prev => [...prev, { id: String(Date.now()), text: transcript, editable: false }])
+  }
+
+  // 处理转写内容更新事件
   const onTranscriptUpdate = (content: string) => {
 
   };
@@ -229,9 +238,19 @@ const MeetingLayout = () => {
                 )}
               </div>
 
-              <div className="recording-control">
-                <AudioRecorder onEdit={onTranscriptEdit} />
-              </div>
+              {/* 录音控制区域 */}
+              {recorderState === 'record' ? (
+                <div className="recording-control">
+                  <AudioRecorder onEdit={onTranscriptEdit} />
+                </div>
+              ) : (
+                <RecorderInput
+                  onRecord={() => setRecorderState('record')}
+                  onTranscriptAdd={onTranscriptAdd}
+                />
+              )
+              }
+
             </Splitter.Panel>
 
             <Splitter.Panel className="right-panel" collapsible={true} size={panelSize[1]}>

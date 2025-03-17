@@ -117,9 +117,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
 
     // 2. 定义边距（单位：毫米）
     const margin = {
-      top: 0,
+      top: 10,
       right: 0,
-      bottom: 0,
+      bottom: 10,
       left: 0,
     };
 

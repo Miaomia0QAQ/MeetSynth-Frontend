@@ -1,14 +1,6 @@
-.background {
-    position: absolute;
-    width: 100%;
-    background-color: rgb(241, 241, 241);
-    bottom: 0;
-    padding-bottom: 20px;
-}
-
 .container {
-    margin: 0 auto;
-    width: 80%;
+    align-self: center;
+    width: 100%;
     max-width: 750px;
     border: 1px solid #e5e7eb;
     border-radius: 20px;
