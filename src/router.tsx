@@ -4,7 +4,7 @@ import MeetingLayout from "./pages/MeetingLayout/MeetingLayout";
 import HomePage from "./pages/HomePage/HomePage";
 import AdminLayout from "./pages/AdminLayout/AdminLayout";
 import Dashboard from "./pages/AdminLayout/Dashboard/Dashboard";
-import Users from "./pages/AdminLayout/Users/Users";
+import Users from "./pages/AdminLayout/UsersAdmin/UsersAdmin";
 import { ConfigProvider } from "antd";
 import MeetingAdmin from "./pages/AdminLayout/MeetingAdmin/MeetingAdmin";
 import UserCenter from "./pages/UserCenter/UserCenter";

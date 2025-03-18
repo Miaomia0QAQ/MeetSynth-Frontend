@@ -1,17 +1,18 @@
-import { use, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined, HomeFilled, LeftCircleOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
 import './MeetingLayout.css';
-import { Avatar, Button, Modal, Splitter } from 'antd';
+import { Avatar, Splitter } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import AISummary, { AISummaryRef } from './AISummary/AISummary';
-import { DeepseekIcon } from '../../component/Icons';
 import Sidebar from './Siderbar/Siderbar';
 import AudioRecorder from './AudioRecorder/AudioRecorder';
 import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
 import { useNavigate } from 'react-router-dom';
 import RecorderInput from './RecorderInput/RecorderInput';
+import SpeechTranscriber from './SpeechTranscriber/SpeechTranscriber';
 
+// 测试数据
 const defaultTranscripts = [
   {
     id: '1',
@@ -182,75 +183,22 @@ const MeetingLayout = () => {
             lazy
             onResize={setPanelSize}
           >
-            <Splitter.Panel className={`left-panel ${hasContent ? 'has-content' : ''}`} size={panelSize[0]}>
-              <h1 className='meeting-title'>
-                {title}
-              </h1>
-
-              {/* 内容区域 */}
-              <div className="content-wrapper">
-                {/* 空状态提示 */}
-                {!hasContent &&
-                  <div className={`empty-state ${hasContent ? 'fade-out' : ''}`}>
-                    <p className="tip-text">点击下方按钮开始录音，实时转写会议内容</p>
-                  </div>
-                }
-
-                {/* 转写内容区域 */}
-                {hasContent && (
-                  <div className="transcript-container">
-                    {
-                      transcripts.map((item) => (
-                        <div key={item.id} className='message-container'>
-                          <Avatar
-                            icon={<UserOutlined />}
-                            style={{ backgroundColor: '#c4c4c4', margin: '5px 8px 0 0' }}
-                          />
-                          <div className="transcript-item">
-                            {item.editable ? (
-                              <>
-                                <textarea
-                                  className="edit-textarea"
-                                  value={editingContent}
-                                  onChange={(e) => setEditingContent(e.target.value)}
-                                  onKeyDown={(e) => handleEditKeyDown(item.id, e)}
-                                  autoFocus
-                                />
-                                <SendOutlined
-                                  onClick={() => handleEditSubmit(item.id)}
-                                  className="submit-icon"
-                                />
-                              </>
-                            ) : (
-                              <>
-                                <span className="text">{item.text}</span>
-                                <div className="action-buttons">
-                                  <EditOutlined onClick={() => handleEdit(item.id)} className="edit-icon" />
-                                  <DeleteOutlined onClick={() => handleDelete(item.id)} className="delete-icon" />
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
-              </div>
-
-              {/* 录音控制区域 */}
-              {recorderState === 'record' ? (
-                <div className="recording-control">
-                  <AudioRecorder onEdit={onTranscriptEdit} />
-                </div>
-              ) : (
-                <RecorderInput
-                  onRecord={() => setRecorderState('record')}
-                  onTranscriptAdd={onTranscriptAdd}
-                />
-              )
-              }
-
+            <Splitter.Panel className="left-panel-wrapper" size={panelSize[0]}>
+              <SpeechTranscriber
+                title={title}
+                hasContent={hasContent}
+                transcripts={transcripts}
+                recorderState={recorderState}
+                editingContent={editingContent}
+                onRecord={() => setRecorderState('record')}
+                onTranscriptEdit={onTranscriptEdit}
+                onTranscriptAdd={onTranscriptAdd}
+                setEditingContent={setEditingContent}
+                handleEdit={handleEdit}
+                handleEditSubmit={handleEditSubmit}
+                handleEditKeyDown={handleEditKeyDown}
+                handleDelete={handleDelete}
+              />
             </Splitter.Panel>
 
             <Splitter.Panel className="right-panel" collapsible={true} size={panelSize[1]}>

@@ -20,6 +20,7 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
+import { data } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -29,45 +30,52 @@ interface User {
     email: string;
     password: string;
     avatar?: string;
+    meetingCount: number;
 }
 
 const Users = () => {
+    // 模拟数据...
     const [users] = useState<User[]>([
-        // 模拟数据...
         {
             id: 354,
-            username: 'john_doe',
+            username: 'miaomiao',
             email: 'john@meetsynth.com',
             password: 'password123',
+            meetingCount: 6,
         },
         {
             id: 666,
-            username: 'john_doe',
+            username: 'hjc',
             email: 'john@meetsynth.com',
             password: 'password123',
-        },{
+            meetingCount: 1,
+        }, {
             id: 5348,
-            username: 'john_doe',
+            username: '彩',
             email: 'john@meetsynth.com',
             password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
-        },{
+            avatar: 'https://i.pravatar.cc/150?img=1',
+            meetingCount: 0,
+        }, {
             id: 783,
-            username: 'john_doe',
+            username: 'yyl',
             email: 'john@meetsynth.com',
             password: 'password123',
-        },{
+            meetingCount: 5,
+        }, {
             id: 738,
             username: 'john_doe',
             email: 'john@meetsynth.com',
             password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
-        },{
+            avatar: 'https://i.pravatar.cc/150?img=1',
+            meetingCount: 1,
+        }, {
             id: 34,
             username: 'john_doe',
             email: 'john@meetsynth.com',
             password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1'
+            avatar: 'https://i.pravatar.cc/150?img=1',
+            meetingCount: 3,
         },
     ]);
 
@@ -84,7 +92,7 @@ const Users = () => {
                 ID: user.id,
                 用户名: user.username,
                 邮箱: user.email,
-                密码: '********', // 保持安全隐藏
+                密码: user.password,
                 头像链接: user.avatar || ''
             }));
 
@@ -171,12 +179,16 @@ const Users = () => {
             ),
         },
         {
+            title: '会议数',
+            dataIndex: 'meetingCount',
+            key: 'meetingCount',
+        },
+        {
             title: '操作',
             key: 'action',
             width: 150,
             render: () => (
                 <Space>
-                    <Button type="link" size="small">编辑</Button>
                     <Popconfirm
                         title="确认删除该用户？"
                         okText="确认"

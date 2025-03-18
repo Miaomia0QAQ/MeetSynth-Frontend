@@ -64,9 +64,9 @@ const Dashboard = () => {
   // 关键指标数据
   const metrics = {
     totalUsers: 2458,
-    activeMeetings: 23,
+    MeetingCount: 6256,
     newUsersToday: 89,
-    systemLoad: 72.5,
+    online: 78,
   };
 
   return (
@@ -107,8 +107,8 @@ const Dashboard = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="进行中会议"
-              value={metrics.activeMeetings}
+              title="会议总数"
+              value={metrics.MeetingCount}
               prefix={<VideoCameraOutlined />}
             />
           </Card>
@@ -126,10 +126,9 @@ const Dashboard = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="系统负载"
-              value={metrics.systemLoad}
-              precision={1}
-              suffix="%"
+              title="在线人数"
+              value={metrics.online}
+              suffix="人"
             />
           </Card>
         </Col>
@@ -138,7 +137,7 @@ const Dashboard = () => {
       {/* 数据可视化区域 */}
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12}>
-          <Card title="用户增长趋势">
+          <Card title="用户活跃度趋势">
             <div style={{ height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={userGrowth}>
