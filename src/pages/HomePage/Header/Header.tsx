@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './Header.module.css';
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Dropdown } from 'antd';
+import { Dropdown, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
@@ -21,11 +21,15 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
     navigate('/login');
   };
 
+  const onUserCenterClick = () => {
+    navigate('/userCenter/info/account');
+  };
+
   // 头像下拉框菜单
   const items: MenuProps['items'] = [
     {
       label: (
-        <a onClick={() => { navigate('/userCenter/info/account') }}>
+        <a onClick={onUserCenterClick}>
           用户中心
         </a>
       ),

@@ -9,16 +9,15 @@ import {
 } from '@ant-design/icons';
 
 interface AudioRecorderProps {
+  handleControlClick: () => void;
   onEdit: () => void;
 }
 
-const AudioRecorder = ({onEdit}: AudioRecorderProps) => {
+const AudioRecorder = ({onEdit, handleControlClick}: AudioRecorderProps) => {
   // 状态管理
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [recordTime, setRecordTime] = useState(0);
-  const mediaRecorder = useRef<MediaRecorder | null>(null);
-  const audioChunks = useRef<Blob[]>([]);
   const timerRef = useRef<any>(null);
 
   // 处理录音时间
@@ -35,39 +34,14 @@ const AudioRecorder = ({onEdit}: AudioRecorderProps) => {
 
   // 开始录音
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder.current = new MediaRecorder(stream);
-    
-    mediaRecorder.current.ondataavailable = (e) => {
-      audioChunks.current.push(e.data);
-    };
-    
-    mediaRecorder.current.start();
     setIsRecording(true);
+    handleControlClick();
   };
 
   // 暂停/继续录音
   const togglePause = () => {
-    if (!mediaRecorder.current) return;
-    
-    if (isPaused) {
-      mediaRecorder.current.resume();
-    } else {
-      mediaRecorder.current.pause();
-    }
     setIsPaused(!isPaused);
-  };
-
-  // 停止录音
-  const stopRecording = () => {
-    if (!mediaRecorder.current) return;
-    
-    mediaRecorder.current.stop();
-    mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
-    
-    setIsRecording(false);
-    setIsPaused(false);
-    setRecordTime(0);
+    handleControlClick();
   };
 
   // 格式化时间显示
@@ -130,13 +104,6 @@ const AudioRecorder = ({onEdit}: AudioRecorderProps) => {
                 onClick={togglePause}
               />
             </Tooltip>
-            <Tooltip title="停止录音">
-              <Button
-                type="text"
-                icon={<StopOutlined />}
-                onClick={stopRecording}
-              />
-            </Tooltip>
           </>
         )}
 
@@ -145,6 +112,7 @@ const AudioRecorder = ({onEdit}: AudioRecorderProps) => {
             type="text"
             icon={<EditOutlined />}
             onClick={onEdit}
+            disabled={isRecording && !isPaused}
           />
         </Tooltip>
       </Space>

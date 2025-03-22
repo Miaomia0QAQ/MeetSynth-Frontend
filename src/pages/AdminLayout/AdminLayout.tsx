@@ -15,6 +15,7 @@ import {
     DashboardOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
+    AlignLeftOutlined,
 } from '@ant-design/icons';
 import './AdminLayout.css'
 
@@ -35,16 +36,24 @@ const AdminLayout = () => {
             label: <Link to="/admin/dashboard">数据看板</Link>,
         },
         {
-            key: '/admin/users',
-            icon: <UserOutlined />,
-            title: '用户管理',
-            label: <Link to="/admin/users">用户管理</Link>,
-        },
-        {
-            key: '/admin/meeting',
-            icon: <VideoCameraOutlined />,
-            title: '会议管理',
-            label: <Link to="/admin/meeting">会议管理</Link>,
+            key: 'admin',
+            icon: <AlignLeftOutlined />,
+            title: '平台管理',
+            label: <span>平台管理</span>,
+            children: [
+                {
+                    key: '/admin/users',
+                    icon: <UserOutlined />,
+                    title: '用户管理',
+                    label: <Link to="/admin/users">用户管理</Link>,
+                },
+                {
+                    key: '/admin/meeting',
+                    icon: <VideoCameraOutlined />,
+                    title: '会议管理',
+                    label: <Link to="/admin/meeting">会议管理</Link>,
+                },
+            ]
         },
         {
             key: '/admin/permissions',
@@ -81,10 +90,11 @@ const AdminLayout = () => {
                     selectedKeys={[location.pathname]}
                     items={menuItems}
                     style={{ borderRight: 'none' }}
+                    defaultOpenKeys={['admin']}
                 />
             </Sider>
 
-            <Layout style={{height: '100vh'}}>
+            <Layout style={{ height: '100vh' }}>
                 <Header style={{
                     padding: '0 24px',
                     background: '#ccd0dc',

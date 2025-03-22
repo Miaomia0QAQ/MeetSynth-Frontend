@@ -1,15 +1,15 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined, HomeFilled, LeftCircleOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
 import './MeetingLayout.css';
 import { Avatar, Splitter } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import AISummary, { AISummaryRef } from './AISummary/AISummary';
 import Sidebar from './Siderbar/Siderbar';
-import AudioRecorder from './AudioRecorder/AudioRecorder';
+import AudioRecorder from './SpeechTranscriber/AudioRecorder/AudioRecorder';
 import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
 import { useNavigate } from 'react-router-dom';
-import RecorderInput from './RecorderInput/RecorderInput';
+import RecorderInput from './SpeechTranscriber/RecorderInput/RecorderInput';
 import SpeechTranscriber from './SpeechTranscriber/SpeechTranscriber';
 
 // 测试数据
@@ -50,6 +50,11 @@ const defaultTranscripts = [
     editable: false,
   }
 ]
+
+export interface TranscriptItem {
+  text: string;
+  editable: boolean;
+}
 const MeetingLayout = () => {
   // 会议id
   const [id, setId] = useState<string>('');
@@ -58,7 +63,7 @@ const MeetingLayout = () => {
   // 会议内容是否存在
   const [hasContent, setHasContent] = useState<boolean>(false);
   // 录音转文字内容
-  const [transcripts, setTranscripts] = useState(defaultTranscripts);
+  const [transcripts, setTranscripts] = useState<TranscriptItem[]>([]);
   // 用户编辑内容
   const [editingContent, setEditingContent] = useState('');
   // 左右版块大小
@@ -92,38 +97,47 @@ const MeetingLayout = () => {
     setTranscripts(prev => [...prev, { id: String(Date.now()), text: transcript, editable: false }])
   }
 
-  // 处理转写内容更新事件
-  const onTranscriptUpdate = (content: string) => {
-
-  };
+  const onTranscriptUpdate = (i: number, transcript: string) => {
+    setTranscripts(prev => {
+      // 数组为空时创建新元素
+      if (prev.length === 0) {
+        return [{ text: transcript, editable: false }];
+      }
+      // 数组有元素时更新第一个元素的text
+      return prev.map((item, index) =>
+        index === i
+          ? { ...item, text: item.text + transcript }
+          : item
+      );
+    });
+  }
 
   const onStopRecording = () => {
 
   };
 
   // 处理可编辑事件
-  const handleEdit = (id: string) => {
-    setEditingContent(transcripts.find(item => item.id === id)?.text || '')
-    setTranscripts(prev => prev.map(item => item.id === id ? { ...item, editable: true } : item))
+  const handleEdit = (index: number) => {
+    setEditingContent(transcripts[index].text || '')
+    setTranscripts(prev => prev.map((item, i) => i === index ? { ...item, editable: true } : item))
   }
 
   // 处理编辑提交事件
-  const handleEditSubmit = (id: string) => {
-    setTranscripts(prev => prev.map(item => item.id === id ? { ...item, text: editingContent, editable: false } : item))
+  const handleEditSubmit = (index: number) => {
+    setTranscripts(prev => prev.map((item, i) => i === index ? { ...item, text: editingContent, editable: false } : item))
     setEditingContent('')
     console.log(666)
   }
 
   // 处理编辑状态时的回车事件（提交）
-  const handleEditKeyDown = (id: string, e: any) => {
+  const handleEditKeyDown = (index: number, e: any) => {
     if (e.keyCode === 13) {
-      handleEditSubmit(id)
+      handleEditSubmit(index)
     }
   }
-
   // 删除录音内容
-  const handleDelete = (id: string) => {
-    setTranscripts(prev => prev.filter(item => item.id !== id))
+  const handleDelete = (index: number) => {
+    setTranscripts(prev => prev.filter((_, i) => i !== index));
   }
 
   /*
@@ -159,6 +173,12 @@ const MeetingLayout = () => {
     setIsUploadModalOpen(false);
   }
 
+  useEffect(() => {
+    if (transcripts.length > 0) {
+      setHasContent(true);
+    }
+  }, [transcripts])
+
   // 渲染
   return (
     <div className="meeting-background">
@@ -193,6 +213,7 @@ const MeetingLayout = () => {
                 onRecord={() => setRecorderState('record')}
                 onTranscriptEdit={onTranscriptEdit}
                 onTranscriptAdd={onTranscriptAdd}
+                onTranscriptUpdate={onTranscriptUpdate}
                 setEditingContent={setEditingContent}
                 handleEdit={handleEdit}
                 handleEditSubmit={handleEditSubmit}

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import styles from './LoginPage.module.css'
 import { loginAPI } from '../../apis/user';
 import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthData {
   username?: string;
@@ -23,6 +24,7 @@ const LoginPage: React.FC = () => {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = localStorage.getItem('credentials');
@@ -60,7 +62,7 @@ const LoginPage: React.FC = () => {
       const res = await loginAPI(authData).then();
       if (res.code === 1) {
         localStorage.setItem('token', res.data.token);
-        message.success("登录成功")
+        navigate('/')
       }
     } catch (error) {
       message.error("登录失败，请检查网络连接")

@@ -12,6 +12,8 @@ import MyMeetings from "./pages/UserCenter/MyMeetings/MyMeetings";
 import AccountManage from "./pages/UserCenter/AccountManage/AccountManage";
 import AvatarManage from "./pages/UserCenter/AvatarManage/AvatarManage";
 import PasswordChange from "./pages/UserCenter/PasswordChange/PasswordChange";
+import PermissionsAdmin from "./pages/AdminLayout/PermissionsAdmin/PermissionsAdmin";
+import PrivateRoute from "./component/PrivateRoute/PrivateRoute";
 
 const adminTheme = {
     token: {
@@ -51,9 +53,11 @@ const router = createBrowserRouter([
     {
         path: '/admin',
         element: (
-            <ConfigProvider theme={adminTheme} >
-                <AdminLayout />
-            </ConfigProvider>
+            <PrivateRoute>
+                <ConfigProvider theme={adminTheme} >
+                    <AdminLayout />
+                </ConfigProvider>
+            </PrivateRoute>
         ),
         children: [
             {
@@ -72,15 +76,19 @@ const router = createBrowserRouter([
                 path: 'meeting',
                 element: <MeetingAdmin />
             },
-            // {
-            //   path: 'permissions',
-            //   element: <Permissions />,
-            // },
+            {
+                path: 'permissions',
+                element: <PermissionsAdmin />,
+            },
         ],
     },
     {
         path: '/userCenter',
-        element: <UserCenter />,
+        element: (
+            <PrivateRoute>
+                <UserCenter />
+            </PrivateRoute>
+        ),
         children: [
             {
                 index: true,
