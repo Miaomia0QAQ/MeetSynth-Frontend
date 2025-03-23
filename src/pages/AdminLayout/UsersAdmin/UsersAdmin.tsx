@@ -1,5 +1,5 @@
 // src/pages/Users.tsx
-import { useState } from 'react';
+import { use, useState } from 'react';
 import {
     Table,
     Input,
@@ -20,7 +20,6 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
-import { data } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -82,6 +81,9 @@ const Users = () => {
     const [searchKey, setSearchKey] = useState('');
     const [showPasswordId, setShowPasswordId] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState(0);
 
     // 导出Excel
     const handleExport = () => {
@@ -238,9 +240,13 @@ const Users = () => {
                 size="middle"
                 scroll={{ x: 1000 }}
                 pagination={{
-                    pageSize: 5,
+                    pageSize: pageSize,
                     showSizeChanger: true,
                     pageSizeOptions: ['5', '10', '20'],
+                    onChange: (page, pageSize) => {
+                        setPage(page);
+                        setPageSize(pageSize);
+                    },
                     showTotal: total => `共 ${total} 条`,
                 }}
                 style={{

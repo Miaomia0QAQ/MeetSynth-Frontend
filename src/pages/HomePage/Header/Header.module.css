@@ -1,4 +1,5 @@
-/* src/styles/Header.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@800&display=swap');
+
 .header {
     position: fixed;
     top: 0;
@@ -12,10 +13,71 @@
     z-index: 1000;
 }
 
-.logo img {
+.logo {
     height: 40px;
-    filter: invert(1);
     cursor: pointer;
+}
+
+.logoText {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg,
+            #00f2fe 15%,
+            #4facfe 35%,
+            #a855f7 65%,
+            #4facfe 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300% 300%;
+    animation: cyberFlow 6s ease infinite;
+    position: relative;
+    padding: 0.2em;
+    text-shadow:
+        0 2px 4px rgba(0, 242, 254, 0.3),
+        0 4px 12px rgba(169, 85, 247, 0.2);
+    transform: perspective(1000px) rotateX(8deg);
+}
+
+.logoText::after {
+    content: "";
+    position: absolute;
+    top: -5%;
+    left: -2%;
+    width: 104%;
+    height: 110%;
+    background: linear-gradient(65deg,
+            rgba(0, 242, 254, 0.15) 0%,
+            rgba(79, 172, 254, 0.1) 50%,
+            rgba(168, 85, 247, 0.15) 100%);
+    z-index: -1;
+    filter: blur(25px);
+}
+
+@keyframes cyberFlow {
+    0% {
+        background-position: 0% 0%
+    }
+
+    33% {
+        background-position: 100% 100%
+    }
+
+    66% {
+        background-position: 50% 80%
+    }
+
+    100% {
+        background-position: 0% 0%
+    }
+}
+
+.logoText:hover {
+    animation-duration: 3s;
+    text-shadow:
+        0 4px 8px rgba(0, 242, 254, 0.4),
+        0 8px 24px rgba(169, 85, 247, 0.3);
 }
 
 .nav {
@@ -33,7 +95,13 @@
 }
 
 .nav a:hover {
-    color: #00ff88;
+    color: #a775fd;
+}
+
+.username {
+    font-size: 20px;
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .userAvatar {

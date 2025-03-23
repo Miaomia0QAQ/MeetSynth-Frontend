@@ -1,72 +1,57 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import './AvatarManage.css'
 import { UploadOutlined, PictureOutlined, UserOutlined } from '@ant-design/icons'
-import { Upload, message, UploadFile } from 'antd'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { UploadImageAPI } from '../../../apis/upload'
-// import { GetUserInfoAPI, UpdateAvatarAPI } from '../../../apis/user'
+import { Upload, message, UploadFile, Avatar } from 'antd'
 import type { UploadChangeParam } from 'antd/es/upload'
-// import type { RootState } from '../../../store' // 请根据你的 store 类型定义路径调整
-// import type { AppDispatch } from '../../../store' // 请根据你的 store 配置调整
+import { getUserInfoAPI, updateAvatarAPI } from '../../../apis/user'
+import type { RcFile } from 'antd/es/upload/interface';
 
 const AvatarManager: FC = () => {
   // const userInfo = useSelector((state: RootState) => state.user.userInfo)
   const [avatar, setAvatar] = useState<string | null>(null)
   // const [currentAvatar, setCurrentAvatar] = useState<string>('')
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileList, setFileList] = useState<any>([])
   const [uploading, setUploading] = useState(false)
   // const dispatch = useDispatch<AppDispatch>()
 
   // 获取用户信息
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     setCurrentAvatar(userInfo.avatar)
-  //   }
-  // }, [userInfo])
+  useEffect(() => {
+    getUserInfo()
+  }, [])
+  // 获取用户信息
+  const getUserInfo = async () => {
+    getUserInfoAPI().then((res) => {
+      if (res.code === 1) {
+        const { id, username, email, avatarUrl, role } = res.data;
+        const userInfo = { id, username, email, avatarUrl, role };
+        setAvatar(userInfo.avatarUrl);
+      }
+    })
+  }
 
   const handleUpload = () => {
-    const formData = new FormData()
-    fileList.forEach((file) => {
-      formData.append('image', file.originFileObj as File)
-    })
+    if (fileList.length === 0) return
     setUploading(true)
 
-    // 上传图片
-    //   UploadImageAPI(formData)
-    //     .then((result) => {
-    //       setFileList([])
-    //       if (result.code === 1) {
-    //         UpdateAvatarAPI(result.data)
-    //           .then((updateResult) => {
-    //             if (updateResult.code === 1) {
-    //               GetUserInfoAPI()
-    //                 .then((res) => {
-    //                   if (res.code === 1) {
-    //                     dispatch({ type: 'user/fetchUserInfo', payload: res.data })
-    //                   }
-    //                 })
-    //                 .catch((error) => {
-    //                   console.error('Fetch user info failed:', error)
-    //                 })
-    //               window.location.reload()
-    //               message.success('修改成功')
-    //             } else {
-    //               message.error('头像修改失败')
-    //             }
-    //           })
-    //           .catch((error) => {
-    //             console.error('Update avatar failed:', error)
-    //           })
-    //       } else {
-    //         message.error('图片上传失败')
-    //       }
-    //     })
-    //     .catch(() => {
-    //       message.error('图片上传失败')
-    //     })
-    //     .finally(() => {
-    //       setUploading(false)
-    //     })
+    updateAvatarAPI(fileList[0])
+      .then((result) => {
+        if (result.code === 1) {
+          message.success('头像更新成功');
+          getUserInfo();
+          setFileList([])
+          // 如果需要保留新头像预览，可以注释下一行
+          // setAvatar(null)
+        } else {
+          message.error(result.msg || '更新失败')
+        }
+      })
+      .catch((error) => {
+        message.error('请求失败')
+        console.error('Update failed:', error)
+      })
+      .finally(() => {
+        setUploading(false)
+      })
   }
 
   const uploadProps = {
@@ -77,29 +62,33 @@ const AvatarManager: FC = () => {
       setFileList(newFileList)
     },
     beforeUpload: (file: File) => {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        message.error('请选择JPG/PNG格式的文件!')
-        return false
+        message.error('请选择JPG/PNG格式的文件!');
+        return false;
       }
-      const isLt2M = file.size / 1024 / 1024 < 2
+      const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        message.error('图片需小于2M!')
-        return false
+        message.error('图片需小于2M!');
+        return false;
       }
-      // setFileList([{ uid: file.name, name: file.name, status: 'done', originFileObj: file }])
-      return false
-    },
-    onChange: (info: UploadChangeParam) => {
-      if (info.file) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          setAvatar(e.target?.result as string)
-        }
-        if (info.file.originFileObj) {
-          reader.readAsDataURL(info.file.originFileObj)
-        }
-      }
+      // 直接读取文件并设置预览
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatar(e.target?.result as string); // 立即更新预览
+      };
+      reader.readAsDataURL(file);
+      // 创建符合要求的文件对象
+      // const rcFile = file as RcFile;
+      // Object.assign(rcFile, {
+      //   uid: Date.now().toString(),
+      //   lastModifiedDate: new Date(file.lastModified)
+      // });
+    
+      // 更新文件列表
+      setFileList([file]);
+    
+      return false; // 阻止自动上传
     },
     fileList,
     showUploadList: false,
@@ -126,7 +115,7 @@ const AvatarManager: FC = () => {
         <div className="divider" />
         <div className="avatar-right">
           <div className="avatar-img">
-            {avatar ? <img src={avatar} alt="用户头像" /> : <UserOutlined style={{ fontSize: '50px', marginTop: '23px'}} />}
+            {avatar ? <Avatar style={{ height: '96px', width: '96px'}} src={avatar} alt="用户头像" /> : <UserOutlined style={{ fontSize: '50px', marginTop: '23px' }} />}
           </div>
           <p className="img-text">当前头像</p>
         </div>

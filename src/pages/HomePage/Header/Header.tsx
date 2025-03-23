@@ -1,10 +1,11 @@
 // src/components/Header.tsx
-import React from 'react';
+import React, { use, useEffect, useState } from 'react';
 import styles from './Header.module.css';
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Dropdown, message } from 'antd';
+import { Avatar, Dropdown, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { getUserInfoAPI } from '../../../apis/user';
 
 interface HeaderProps {
   scrollToSection: (targetId: string) => void;
@@ -12,11 +13,13 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
   const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<any>({});
 
   // 退出登录
   const handleLogout = () => {
     if (localStorage.getItem('token')) {
       localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
     }
     navigate('/login');
   };
@@ -55,15 +58,27 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
       key: '3',
     },
   ];
+
   // 菜单项被点击事件
   const handleItemClick = (targetId: string) => {
     scrollToSection(targetId);
   };
 
+  // 获取用户信息
+  useEffect(() => {
+    getUserInfoAPI().then((res) => {
+      if (res.code === 1) {
+        const { id, username, email, avatarUrl, role } = res.data;
+        setUserInfo({ id, username, email, avatarUrl, role });
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      }
+    })
+  }, []);
+
   return (
     <header className={styles.header}>
       <div className={styles.logo} onClick={() => handleItemClick('hero')}>
-        <img src="/logo.png" alt="Logo" />
+        <h2 className={styles.logoText}>MeetSynth</h2>
       </div>
 
       <nav className={styles.nav}>
@@ -72,11 +87,16 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
         <a onClick={() => handleItemClick('upload')}>录入音视频</a>
       </nav>
 
+      <div className={styles.username}>{userInfo?.username}</div>
       <Dropdown menu={{ items }} trigger={['hover']} placement='bottom' arrow={{ pointAtCenter: true }}>
         <div className={styles.userAvatar}>
-          <div className={styles.avatar} onClick={() => {/* 点击处理 */ }} >
-            <UserOutlined />
-          </div>
+          {userInfo?.avatarUrl && userInfo?.avatarUrl !== 'https://example.com/avatar/default.png' ?
+            <Avatar
+              src={userInfo.avatarUrl}
+              alt="avatar"
+              size={40}
+            /> :
+            <div className={styles.avatar} ><UserOutlined /></div>}
         </div>
       </Dropdown>
     </header>

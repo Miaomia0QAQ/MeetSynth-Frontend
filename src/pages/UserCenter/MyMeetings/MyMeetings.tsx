@@ -1,4 +1,4 @@
-import { Input, Button, List, Tag, Space } from 'antd';
+import { Input, Button, List, Space } from 'antd';
 import { AudioOutlined, UploadOutlined, DeleteOutlined, RightCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import './MyMeetings.css';

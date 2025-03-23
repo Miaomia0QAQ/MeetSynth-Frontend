@@ -1,31 +1,72 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Avatar, List, Button, Popconfirm, Input, Space, message } from 'antd';
 import { EditOutlined, MailOutlined, LockOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import './AccountManage.css';
+import { deleteAccountAPI, getUserInfoAPI, updateUsernameAPI } from '../../../apis/user';
 
 const AccountManage = () => {
-  const [username, setUsername] = useState('张小明');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [avatar, setAvatar] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [tempUsername, setTempUsername] = useState(username);
   const navigate = useNavigate();
 
   // 模拟数据
   const userInfo = {
-    avatar: 'https://example.com/avatar.png',
-    email: 'zhangxm@example.com',
     meetingCount: 15,
   };
 
-  const handleSaveUsername = () => {
+  // 获取用户信息
+  const getUserInfo = async () => {
+    getUserInfoAPI().then((res) => {
+      if (res.code === 1) {
+        const { id, username, email, avatarUrl, role } = res.data;
+        const userInfo = { id, username, email, avatarUrl, role };
+        setUsername(userInfo.username);
+        setAvatar(userInfo.avatarUrl);
+        setEmail(userInfo.email);
+      }
+    })
+  }
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  // 修改用户名
+  const handleSaveUsername = async () => {
     setUsername(tempUsername);
-    setIsEditing(false);
-    message.success('用户名修改成功');
+    await updateUsernameAPI(tempUsername).then((res) => {
+      if (res.code === 1) {
+        getUserInfo();
+        setIsEditing(false);
+        message.success('用户名修改成功');
+      } else {
+        message.error('用户名修改失败');
+      }
+    }).catch((err) => console.log(err));
   };
 
+  // 取消注销
   const handleCancelDelete = () => {
-    message.error('已取消注销操作');
+    // message.error('已取消注销操作');
   };
+
+  // 注销
+  const handleComfirmDelete = () => {
+    deleteAccountAPI().then((res) => {
+      if (res.code === 1) {
+        message.success('已注销账号');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
+      } else {
+        message.error('注销失败');
+      }
+    });
+  }
 
   return (
     <div className="account-container">
@@ -34,7 +75,7 @@ const AccountManage = () => {
       <div className="profile-info">
         <Link to="/userCenter/info/avatar">
           <Avatar
-            src={userInfo.avatar}
+            src={avatar}
             size={80}
             className="profile-avatar"
           />
@@ -74,7 +115,7 @@ const AccountManage = () => {
           <List.Item.Meta
             avatar={<MailOutlined />}
             title="绑定邮箱"
-            description={userInfo.email}
+            description={email}
           />
           {/* <Button onClick={() => navigate('/user/security/email')}>
             修改邮箱
@@ -100,7 +141,7 @@ const AccountManage = () => {
         okText="确认注销"
         cancelText="取消"
         okButtonProps={{ danger: true }}
-        onConfirm={() => {/* 实际注销逻辑 */ }}
+        onConfirm={handleComfirmDelete}
         onCancel={handleCancelDelete}
       >
         <Button

@@ -3,6 +3,7 @@ import { Steps, Input, Button, Space, Alert, Result } from 'antd';
 import { MailOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './PasswordChange.css';
+import { updatePasswordAPI, validateEmailAPI, validatePasswordAPI } from '../../../apis/user';
 
 const { Step } = Steps;
 
@@ -22,26 +23,34 @@ const PasswordChange = () => {
         { title: '设置新密码', icon: <SafetyOutlined /> },
     ];
 
-    const validateOldPassword = () => {
+    // 验证原密码
+    const validateOldPassword = async () => {
         setLoading(true);
-        setTimeout(() => {
+        validatePasswordAPI(oldPassword).then((res) => {
             setLoading(false);
-            if (oldPassword === '123456') { // 模拟验证
+            if (res.code === 1) {
                 setCurrentStep(1);
-                setError('');
+                setError('')
             } else {
-                setError('原密码不正确');
+                setError(res.msg);
             }
-        }, 1000);
+        }).catch(() => {
+            setLoading(false);
+            setError('网络出错');
+        });
     };
 
     const validateCode = () => {
-        if (code === '123456') {
-            setCurrentStep(2);
-            setError('');
-        } else {
+        validateEmailAPI(code).then((res) => {
+            if (res.code === 1) {
+                setCurrentStep(2);
+                setError('');
+            } else {
+                setError(res.msg);
+            }
+        }).catch(() => {
             setError('验证码错误');
-        }
+        });
     };
 
     const handleSetPassword = () => {
@@ -50,10 +59,17 @@ const PasswordChange = () => {
             return;
         }
         setLoading(true);
-        setTimeout(() => {
+        updatePasswordAPI(newPassword).then(res => {
             setLoading(false);
-            setCurrentStep(3);
-        }, 1000);
+            if (res.code === 1) {
+                setCurrentStep(3);
+                setError('');
+            } else {
+                setError(res.msg);
+            }
+        }).catch(() => {
+            setError('网络出错');
+        });
     };
 
     const renderForm = () => {
@@ -145,7 +161,7 @@ const PasswordChange = () => {
                             <Button
                                 type="primary"
                                 key="return"
-                                onClick={() => navigate('/user')}
+                                onClick={() => navigate('/userCenter/info/account')}
                             >
                                 返回用户中心
                             </Button>,

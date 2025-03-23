@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion';
 import styles from './LoginPage.module.css'
-import { loginAPI } from '../../apis/user';
+import { getUserInfoAPI, loginAPI, registerAPI, sendcaptchaAPI } from '../../apis/user';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,11 +48,15 @@ const LoginPage: React.FC = () => {
     }, 1000);
 
     try {
-      // 这里调用发送验证码的API
-      console.log('验证码已发送至:', authData.email);
+      await sendcaptchaAPI(authData.email).then(res=> {
+        if (res.code === 1) {
+        } else {
+          message.error('验证码发送失败');
+        }
+      })
     } catch (error) {
       clearInterval(interval);
-      alert('发送验证码失败');
+      message.error('发送验证码失败');
     }
   };
 
@@ -66,6 +70,23 @@ const LoginPage: React.FC = () => {
       }
     } catch (error) {
       message.error("登录失败，请检查网络连接")
+    }
+  }
+
+  // 处理注册逻辑
+  const handleRegister = async () => {
+    const { email, password, username } = authData;
+    const data = { email, password, username, captcha: authData.verificationCode };
+    try {
+      const res = await registerAPI(data).then();
+      if (res.code === 1) {
+        message.success('注册成功，请登录');
+        handleChangeLoginState();
+      } else {
+        message.error(res.msg);
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -88,6 +109,11 @@ const LoginPage: React.FC = () => {
     // 处理登录逻辑
     if (!isRegistering) {
       handleLogin()
+    }
+
+    // 处理注册逻辑
+    if (isRegistering) {
+      handleRegister()
     }
 
     // 处理记住密码逻辑
