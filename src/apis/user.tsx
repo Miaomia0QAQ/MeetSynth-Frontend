@@ -101,3 +101,21 @@ export async function registerAPI(authData: any): Promise<Result> {
         params: authData
     });
 }
+
+// 获取用户列表
+export async function getUserListAPI(page: number, pageSize: number, username?: string): Promise<Result> {
+    return request({
+        url: 'admin/users/list',
+        method: 'get',
+        params: username ? { page, pageSize, username } : { page, pageSize }
+    });
+}
+
+// 管理员删除用户
+export async function deleteUserAPI(id: string): Promise<Result> {
+    return request({
+        url: 'admin/users/delete',
+        method: 'POST',
+        params: { id }
+    });
+}

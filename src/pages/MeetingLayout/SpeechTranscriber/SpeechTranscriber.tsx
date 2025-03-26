@@ -176,7 +176,11 @@ const SpeechTranscriber = ({
                             <div key={index} className='message-container'>
                                 <Avatar
                                     icon={<UserOutlined />}
-                                    style={{ backgroundColor: '#c4c4c4', margin: '5px 8px 0 0' }}
+                                    style={{ 
+                                        flexShrink: 0,
+                                        backgroundColor: '#c4c4c4', 
+                                        margin: '5px 8px 0 0' 
+                                    }}
                                 />
                                 <div className="transcript-item">
                                     {item.editable ? (

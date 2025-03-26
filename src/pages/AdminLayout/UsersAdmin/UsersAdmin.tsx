@@ -1,5 +1,4 @@
-// src/pages/Users.tsx
-import { use, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Table,
     Input,
@@ -10,7 +9,8 @@ import {
     Popconfirm,
     Card,
     Tooltip,
-    notification
+    notification,
+    message
 } from 'antd';
 import {
     UserOutlined,
@@ -20,11 +20,12 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
+import { deleteUserAPI, getUserListAPI } from '../../../apis/user';
 
 const { Text } = Typography;
 
 interface User {
-    id: number;
+    id: string;
     username: string;
     email: string;
     password: string;
@@ -33,57 +34,14 @@ interface User {
 }
 
 const Users = () => {
-    // 模拟数据...
-    const [users] = useState<User[]>([
-        {
-            id: 354,
-            username: 'miaomiao',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            meetingCount: 6,
-        },
-        {
-            id: 666,
-            username: 'hjc',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            meetingCount: 1,
-        }, {
-            id: 5348,
-            username: '彩',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1',
-            meetingCount: 0,
-        }, {
-            id: 783,
-            username: 'yyl',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            meetingCount: 5,
-        }, {
-            id: 738,
-            username: 'john_doe',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1',
-            meetingCount: 1,
-        }, {
-            id: 34,
-            username: 'john_doe',
-            email: 'john@meetsynth.com',
-            password: 'password123',
-            avatar: 'https://i.pravatar.cc/150?img=1',
-            meetingCount: 3,
-        },
-    ]);
 
     const [searchKey, setSearchKey] = useState('');
-    const [showPasswordId, setShowPasswordId] = useState<number | null>(null);
+    const [showPasswordId, setShowPasswordId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
+    const [users, setUsers] = useState<User[]>([]);
 
     // 导出Excel
     const handleExport = () => {
@@ -95,7 +53,6 @@ const Users = () => {
                 用户名: user.username,
                 邮箱: user.email,
                 密码: user.password,
-                头像链接: user.avatar || ''
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -116,6 +73,39 @@ const Users = () => {
             setLoading(false);
         }
     };
+
+    // 获取用户列表
+    const getUserList = async () => {
+        getUserListAPI(page, pageSize).then((res) => {
+            if (res.code === 1) {
+                const formattedUsers = res.data.list.map((item: any) => ({
+                    id: item.id,
+                    username: item.username,
+                    email: item.email,
+                    password: item.password,
+                    avatar: item.avatarUrl,
+                    meetingCount: item.meetingCount
+                }));
+                setUsers(formattedUsers);
+                setTotal(res.data.total);
+            }
+        })
+    };
+
+    // 删除用户
+    const deleteUser = (id: string) => {
+        deleteUserAPI(id).then((res) => {
+            if (res.code === 1) {
+                getUserList();
+                message.success('用户已删除');
+            }
+        })
+    };
+
+    // 获取用户列表
+    useEffect(() => {
+        getUserList();
+    }, [])
 
     // 列配置
     const columns = [
@@ -138,8 +128,8 @@ const Users = () => {
             dataIndex: 'id',
             key: 'id',
             width: 100,
-            sorter: (a: User, b: User) => a.id - b.id,
             defaultSortOrder: 'ascend' as const,
+            ellipsis: true,
         },
         {
             title: '用户名',
@@ -189,12 +179,13 @@ const Users = () => {
             title: '操作',
             key: 'action',
             width: 150,
-            render: () => (
+            render: (record: User) => (
                 <Space>
                     <Popconfirm
                         title="确认删除该用户？"
                         okText="确认"
                         cancelText="取消"
+                        onConfirm={() => deleteUser(record.id)}
                     >
                         <Button type="link" danger size="small">删除</Button>
                     </Popconfirm>
@@ -247,7 +238,7 @@ const Users = () => {
                         setPage(page);
                         setPageSize(pageSize);
                     },
-                    showTotal: total => `共 ${total} 条`,
+                    showTotal: () => `共 ${total} 条`,
                 }}
                 style={{
                     borderRadius: 8,

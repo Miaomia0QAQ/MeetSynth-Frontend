@@ -3,13 +3,33 @@ import { FaRocket, FaMicrophone, FaClipboardList } from 'react-icons/fa';
 import './QuickStart.css';
 import HitechButton from './HitechButton/HitechButton';
 import { useNavigate } from 'react-router-dom';
+import { createMeetingAPI } from '../../../apis/meeting';
+import { message } from 'antd';
 
 const QuickStart = () => {
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
 
-    const handleStart = () => {
-        navigate('/meeting');
+    // 获取当前日期
+    const getDate = () => {
+        const date = new Date();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}月${day}日`;
+    }
+
+    // 快速开始会议
+    const handleStart = async () => {
+        await createMeetingAPI({ title: `${getDate()}会议` }).then(res => {
+            if (res.code === 1) {
+                navigate(`/meeting?id=${res.data}`);
+            } else {
+                message.error(res.msg || '创建会议失败');
+            }
+        }).catch(err => {
+            console.log(err);
+            message.error('创建会议失败');
+        })
     };
 
     return (

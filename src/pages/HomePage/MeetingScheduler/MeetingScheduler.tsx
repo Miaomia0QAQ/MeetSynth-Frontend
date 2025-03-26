@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './MeetingScheduler.css';
 import { useNavigate } from 'react-router-dom';
 import { animate } from 'framer-motion';
+import { createMeetingAPI } from '../../../apis/meeting';
+import { message, Modal } from 'antd';
 
 interface MeetingForm {
     title: string;
@@ -30,7 +32,7 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const formGroupsRef = useRef<Array<HTMLDivElement | null>>([]);
     const [isAnimateIn, setIsAnimateIn] = useState(false);
-    
+
     useEffect(() => {
         if (activeSection === 'schedule') {
             setIsAnimateIn(true);
@@ -54,19 +56,38 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
     }, [isAnimateIn]);
 
     // 处理表单提交
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Meeting Scheduled:', formData);
-        alert('会议预定成功！');
-        // 跳转至 '/meeting'
-        navigate('/meeting')
+        try {
+            // 调用创建会议接口
+            const res = await createMeetingAPI(formData);
+
+            if (res.code === 1) {
+                Modal.confirm({
+                    title: '预定成功',
+                    content: '会议预定成功！',
+                    okText: '进入会议',
+                    cancelText: '知道了',
+                    onOk: () => {
+                        // 跳转到会议室页面，使用接口返回的会议号
+                        navigate(`/meeting?id=${res.data}`);
+                    },
+                });
+            } else {
+                // 处理业务逻辑错误
+                message.error(res.msg || '会议预定失败');
+            }
+        } catch (err) {
+            // 处理网络错误
+            message.error('请求失败，请检查网络连接');
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'participants' ? value.split(',').map(p => p.trim()) : value
+            [name]: value
         }));
     };
 

@@ -1,65 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
-import { DeleteOutlined, EditOutlined, HomeFilled, LeftCircleOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
+import { use, useEffect, useRef, useState } from 'react';
+import { HomeFilled, LeftCircleOutlined } from '@ant-design/icons';
 import './MeetingLayout.css';
-import { Avatar, Splitter } from 'antd';
+import { Splitter } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import AISummary, { AISummaryRef } from './AISummary/AISummary';
 import Sidebar from './Siderbar/Siderbar';
-import AudioRecorder from './SpeechTranscriber/AudioRecorder/AudioRecorder';
 import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
-import { useNavigate } from 'react-router-dom';
-import RecorderInput from './SpeechTranscriber/RecorderInput/RecorderInput';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import SpeechTranscriber from './SpeechTranscriber/SpeechTranscriber';
-
-// 测试数据
-const defaultTranscripts = [
-  {
-    id: '1',
-    text: '我今天很开心，因为今天是星期五，所以',
-    editable: false,
-  },
-  {
-    id: '2',
-    text: '今天是星期五，所以',
-    editable: false,
-  },
-  {
-    id: '3',
-    text: '今天是fsefes，所以',
-    editable: false,
-  },
-  {
-    id: '4',
-    text: '今天是星期hhh，所以',
-    editable: false,
-  },
-  {
-    id: '5',
-    text: '今天是星期五，于是',
-    editable: false,
-  },
-  {
-    id: '6',
-    text: '房间很冷，所以',
-    editable: false,
-  },
-  {
-    id: '7',
-    text: '今天是星期五，所以',
-    editable: false,
-  }
-]
+import { getMeetingAPI } from '../../apis/meeting';
+import { meetingInfo } from '../../types/meetingInfo';
 
 export interface TranscriptItem {
   text: string;
   editable: boolean;
 }
 const MeetingLayout = () => {
+  const [searchParams] = useSearchParams();
   // 会议id
-  const [id, setId] = useState<string>('');
+  const id = searchParams.get('id') || '';
   // 会议标题
-  const [title, setTitle] = useState<string>('第23届联合国大会');
+  const [info, setInfo] = useState<meetingInfo>({});
   // 会议内容是否存在
   const [hasContent, setHasContent] = useState<boolean>(false);
   // 录音转文字内容
@@ -82,6 +44,7 @@ const MeetingLayout = () => {
   // AI总结事件
   const handleSummarize = () => {
     if (panelSize[1] === '0%' || panelSize[1] === 0 || panelSize[1] === '0') {
+      summaryRef.current?.sendRequest(transcripts.map(item => item.text).join('\n'))
       setPanelSize(['50%', '50%']);
     }
   }
@@ -140,6 +103,14 @@ const MeetingLayout = () => {
     setTranscripts(prev => prev.filter((_, i) => i !== index));
   }
 
+  // 获取当前日期
+  const getDate = () => {
+    const date = new Date();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${month}月${day}日`;
+  }
+
   /*
     下面是模态框的事件处理函数
   */
@@ -174,6 +145,18 @@ const MeetingLayout = () => {
   }
 
   useEffect(() => {
+    if (id && id !== '') {
+      getMeetingAPI(id).then(res => {
+        if (res.code === 1) {
+          const { title, description, startTime, participants, leader, recording } = res.data;
+          setInfo({ title, description, startTime, participants, leader });
+          setTranscripts([{ text: recording, editable: false }]);
+        }
+      })
+    }
+  }, [])
+
+  useEffect(() => {
     if (transcripts.length > 0) {
       setHasContent(true);
     }
@@ -205,7 +188,7 @@ const MeetingLayout = () => {
           >
             <Splitter.Panel className="left-panel-wrapper" size={panelSize[0]}>
               <SpeechTranscriber
-                title={title}
+                title={info.title ? info.title : `${getDate()}会议`}
                 hasContent={hasContent}
                 transcripts={transcripts}
                 recorderState={recorderState}

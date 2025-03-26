@@ -1,4 +1,3 @@
-// src/pages/Dashboard.tsx
 import { useState, useMemo } from 'react';
 import { Card, Row, Col, Statistic, DatePicker, Select, Typography, Space } from 'antd';
 import { 
@@ -26,10 +25,11 @@ const { Option } = Select;
 // 模拟数据生成器
 const generateMockData = () => {
   // 用户增长数据
-  const userGrowth = Array.from({ length: 30 }).map((_, i) => ({
-    date: dayjs().subtract(30 - i, 'day').format('YYYY-MM-DD'),
+  const userActivityTrends = Array.from({ length: 7 }).map((_, i) => ({
+    date: dayjs().subtract(30 - i, 'day').format('YYYY/MM/DD'),
     count: Math.floor(Math.random() * 100) + 50,
   }));
+  console.log(JSON.stringify(userActivityTrends));
 
   // 会议统计数据
   const meetingData = [
@@ -45,7 +45,7 @@ const generateMockData = () => {
     { metric: '网络延迟', value: 28 },
   ];
 
-  return { userGrowth, meetingData, performanceData };
+  return { userActivityTrends, meetingData, performanceData };
 };
 
 const Dashboard = () => {
@@ -54,9 +54,10 @@ const Dashboard = () => {
     dayjs().subtract(1, 'week'),
     dayjs(),
   ]);
+  console.log(dateRange[0]);
 
   // 生成模拟数据
-  const { userGrowth, meetingData, performanceData } = useMemo(
+  const { userActivityTrends, meetingData, performanceData } = useMemo(
     generateMockData,
     [timeRange, dateRange]
   );
@@ -140,7 +141,7 @@ const Dashboard = () => {
           <Card title="用户活跃度趋势">
             <div style={{ height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={userGrowth}>
+                <LineChart data={userActivityTrends}>
                   <Line 
                     type="monotone" 
                     dataKey="count" 

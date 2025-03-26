@@ -1,9 +1,9 @@
 // src/components/Header.tsx
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Header.module.css';
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Avatar, Dropdown, message } from 'antd';
+import { Avatar, Dropdown } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getUserInfoAPI } from '../../../apis/user';
 
@@ -40,11 +40,20 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
     },
     {
       label: (
+        <a onClick={() => { navigate('/userCenter/meetings') }}>
+          我的会议
+        </a>
+      ),
+      key: '1',
+    },
+    {
+      label: (
         <a onClick={() => { navigate('/admin') }}>
           管理后台
         </a>
       ),
-      key: '1',
+      key: '2',
+      disabled: userInfo?.role === 'admin'
     },
     {
       type: 'divider',
@@ -66,13 +75,15 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
 
   // 获取用户信息
   useEffect(() => {
-    getUserInfoAPI().then((res) => {
-      if (res.code === 1) {
-        const { id, username, email, avatarUrl, role } = res.data;
-        setUserInfo({ id, username, email, avatarUrl, role });
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-      }
-    })
+    if (localStorage.getItem('token')) {
+      getUserInfoAPI().then((res) => {
+        if (res.code === 1) {
+          const { id, username, email, avatarUrl, role } = res.data;
+          setUserInfo({ id, username, email, avatarUrl, role });
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        }
+      })
+    }
   }, []);
 
   return (
