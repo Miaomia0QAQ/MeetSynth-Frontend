@@ -126,3 +126,15 @@ export async function getMeetingListAPI(page: number, pageSize: number, title?: 
         }
     })
 }
+
+// 根据音频创建会议
+export async function createMeetingByAudioAPI(audio: File): Promise<Result> {
+    const formData = new FormData();
+    formData.append('audio', audio);
+    return request({
+        timeout: 60000, // 设置超时时间为60秒
+        url: 'meeting/create/audio',
+        method: 'post',
+        data: formData,
+   });
+}

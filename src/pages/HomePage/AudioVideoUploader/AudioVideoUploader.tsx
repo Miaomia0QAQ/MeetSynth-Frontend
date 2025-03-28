@@ -1,7 +1,9 @@
-import { Upload, Card, Typography, Button } from 'antd';
+import { Upload, Card, Typography, Button, Spin, message } from 'antd';
 import { InboxOutlined, CheckCircleFilled } from '@ant-design/icons';
 import './AudioVideoUploader.css';
 import { useEffect, useState } from 'react';
+import { createMeetingByAudioAPI } from '../../../apis/meeting';
+import { useNavigate } from 'react-router-dom';
 
 const { Dragger } = Upload;
 const { Title, Text } = Typography;
@@ -11,6 +13,8 @@ interface AudioVideoUploaderProps {
 }
 const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
     const [isAnimateIn, setIsAnimateIn] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (activeSection === 'upload') {
@@ -20,8 +24,38 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
         }
     }, [activeSection]);
 
+    const handleUpload = async (file: File) => {
+        setLoading(true);
+        try {
+            const result = await createMeetingByAudioAPI(file);
+            if (result.code === 1) {
+                message.success('上传成功，正在跳转会议页面...');
+                navigate(`/meeting?id=${result.data.id}`);
+            } else {
+                message.error(result.msg || '会议创建失败');
+            }
+        } catch (error) {
+            message.error('上传过程中发生错误');
+            console.error('上传错误:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="audio-uploader-container">
+            {/* 全屏加载效果 */}
+            {loading && (
+                <Spin
+                    size="large"
+                    tip="音频处理中，请稍候..."
+                    className="fullscreen-loading"
+                    fullscreen
+                >
+                    <div className="loading-content" />
+                </Spin>
+            )}
+
             {/* 标题部分 */}
             <h2 className={`audio-uploader-title ${isAnimateIn ? 'animate-in' : ''}`}>
                 <span className="title-highlight">导入音视频</span>
@@ -60,7 +94,13 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
                         <Dragger
                             className="uploadDragger"
                             accept="audio/*,video/*"
-                            multiple
+                            multiple={false}
+                            beforeUpload={(file) => {
+                                handleUpload(file);
+                                return false; // 阻止默认上传行为
+                            }}
+                            showUploadList={false}
+                            disabled={loading}
                             style={{
                                 maxWidth: 800,
                                 width: '100%',
@@ -110,6 +150,7 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
                     type="primary"
                     size="large"
                     className="actionButton"
+                    onClick={()=>{navigate('/userCenter/meetings')}}
                 >
                     立即体验
                 </Button>

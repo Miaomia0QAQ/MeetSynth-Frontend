@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 import styles from './AiChatInput.module.css';
 import { ArrowUpOutlined, DownloadOutlined, EditFilled, RedoOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';

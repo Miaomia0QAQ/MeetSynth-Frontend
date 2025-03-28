@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -82,7 +82,7 @@ const theme: CustomPrismTheme = {
 
 // 定义组件props类型
 interface MarkdownRendererProps {
-  content: string;
+  content: string | null;
 }
 
 // 自定义rehype插件处理代码块
@@ -101,11 +101,7 @@ function rehypeSyntaxHighlight() {
 }
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
-  // 拓展markdown语法处理范围（#号后不带空格也可处理为标题）
-  const processedContent = content
-  .replace(/(^#{1,6})([^\s#])/gm, (_, hashes, text) => `${hashes} ${text}`)
-  .replace(/(^[-])([^\s])/gm, (_, symbol, text) => `${symbol} ${text}`)
-  .replace(/(\*\*.*?\*\*)(\S)/g, (_, boldText, nextChar) => `${boldText} ${nextChar}`);
+  const [processedContent, setProcessedContent] = React.useState<string | null>(content);
 
   // 导出pdf
   const exportPdf = async () => {
@@ -154,6 +150,16 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     // 9. 保存 PDF
     pdf.save('document-with-padding.pdf');
   };
+
+  useEffect(() => {
+    // 拓展markdown语法处理范围（#号后不带空格也可处理为标题）
+    if (content) {
+      setProcessedContent(content
+        .replace(/(^#{1,6})([^\s#])/gm, (_, hashes, text) => `${hashes} ${text}`)
+        .replace(/(^[-])([^\s])/gm, (_, symbol, text) => `${symbol} ${text}`)
+        .replace(/(\*\*.*?\*\*)(\S)/g, (_, boldText, nextChar) => `${boldText} ${nextChar}`))
+    }
+  }, [content]);
 
   return (
     <div className='renderer-container'>
