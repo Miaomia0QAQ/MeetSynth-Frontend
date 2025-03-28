@@ -1,4 +1,4 @@
-import { Avatar } from 'antd';
+import { Avatar, message } from 'antd';
 import { DeleteOutlined, EditOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import AudioRecorder from './AudioRecorder/AudioRecorder';
@@ -7,6 +7,7 @@ import './SpeechTranscriber.css';
 import { hex_md5 } from '../../../utils/md5';
 import CryptoJS from 'crypto-js';
 import { TranscriptItem } from '../MeetingLayout';
+import { saveTranscriptAPI } from '../../../apis/meeting';
 
 type TranscribeStatus = 'UNDEFINED' | 'CONNECTING' | 'OPEN' | 'CLOSING' | 'CLOSED';
 
@@ -14,6 +15,7 @@ const appId = '12779e92';
 const secretKey = 'f9f356c94a4743faf5a91845e29937e6';
 
 interface SpeechTranscriberProps {
+    id: string;
     title: string;
     hasContent: boolean;
     transcripts: TranscriptItem[];
@@ -31,6 +33,7 @@ interface SpeechTranscriberProps {
 }
 
 const SpeechTranscriber = ({
+    id,
     title,
     hasContent,
     transcripts,
@@ -85,7 +88,6 @@ const SpeechTranscriber = ({
         const ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
-            console.log('WebSocket opened');
             setStatus('OPEN');
             recorderRef.current?.start({
                 sampleRate: 16000,
@@ -102,7 +104,6 @@ const SpeechTranscriber = ({
         };
 
         ws.onclose = () => {
-            console.log('WebSocket closed')
             recorderRef.current?.stop();
             setStatus('CLOSED');
         };
@@ -126,12 +127,9 @@ const SpeechTranscriber = ({
             });
 
             if (result.cn.st.type === '0') {
-                console.log("temp", temp)
-                console.log('resultText:', resultTextTemp);
                 onTranscriptUpdate(0, temp)
                 setResultTextTemp('');
             } else {
-                console.log("temp", temp)
                 setResultTextTemp(temp);
             }
         } else if (jsonData.action === "error") {
@@ -157,6 +155,29 @@ const SpeechTranscriber = ({
         }
     };
 
+    // 保存录音转译原文
+    // const saveTranscript = () => {
+    //     if (transcripts.length > 0) {
+    //         let result = '';
+    //         transcripts.forEach((item) => {
+    //             if (item.text) {
+    //                 result += `${item.text}\n`
+    //             }
+    //         });
+    //         if (result !== '') {
+    //             saveTranscriptAPI(id, result).then(res => {
+    //                 if (res.code === 1) {
+    //                 } else {
+    //                     message.error(res.msg || '录音保存失败');
+    //                 }
+    //             }).catch(err => {
+    //                 message.error('录音保存失败，请检查网络');
+    //                 console.log(err);
+    //             })
+    //         }
+    //     }
+    // };
+
     return (
         <div className={`left-panel ${hasContent ? 'has-content' : ''}`}>
             <h1 className='meeting-title'>
@@ -176,10 +197,10 @@ const SpeechTranscriber = ({
                             <div key={index} className='message-container'>
                                 <Avatar
                                     icon={<UserOutlined />}
-                                    style={{ 
+                                    style={{
                                         flexShrink: 0,
-                                        backgroundColor: '#c4c4c4', 
-                                        margin: '5px 8px 0 0' 
+                                        backgroundColor: '#c4c4c4',
+                                        margin: '5px 8px 0 0'
                                     }}
                                 />
                                 <div className="transcript-item">

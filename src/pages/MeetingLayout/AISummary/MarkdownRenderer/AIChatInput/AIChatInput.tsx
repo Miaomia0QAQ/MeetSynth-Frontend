@@ -1,16 +1,22 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import styles from './AiChatInput.module.css';
 import { ArrowUpOutlined, DownloadOutlined, EditFilled } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
-import { isEditContext } from '../../AISummary';
+import { isEditContext } from '../../isEditContext';
 
 interface AIChatInputProps {
     onExportPdf: () => void;
 }
 
 const AIChatInput: React.FC<AIChatInputProps> = ({ onExportPdf }) => {
-    const [message, setMessage] = useState('');
-    const { setIsEdit } = useContext(isEditContext);
+    const { feedback, setFeedback, setIsEdit, handleSendRequest } = useContext(isEditContext);
+
+    const handleSumbit = () => {
+        if (feedback) {
+            handleSendRequest();
+            setFeedback('');
+        }
+    };
 
     return (
         <div className={styles.background}>
@@ -19,8 +25,8 @@ const AIChatInput: React.FC<AIChatInputProps> = ({ onExportPdf }) => {
                 <div className={styles.inputContainer}>
                     <textarea
                         className={styles.input}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
                         placeholder="生成结果不满意？给 AI 提点意见吧"
                         rows={1}
                     />
@@ -49,8 +55,9 @@ const AIChatInput: React.FC<AIChatInputProps> = ({ onExportPdf }) => {
                         />
                     </Tooltip>
                     <button
-                        className={`${styles.sendButton} ${message ? styles.active : ''}`}
-                        disabled={!message}
+                        className={`${styles.sendButton} ${feedback ? styles.active : ''}`}
+                        disabled={!feedback}
+                        onClick={handleSumbit}
                     >
                         <ArrowUpOutlined />
                     </button>

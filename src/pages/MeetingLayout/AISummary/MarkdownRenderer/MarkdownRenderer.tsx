@@ -102,10 +102,10 @@ function rehypeSyntaxHighlight() {
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   // 拓展markdown语法处理范围（#号后不带空格也可处理为标题）
-  const processedContent = content.replace(
-    /(^#{1,6})([^\s#])/gm,
-    (_, hashes, text) => `${hashes} ${text}`
-  );
+  const processedContent = content
+  .replace(/(^#{1,6})([^\s#])/gm, (_, hashes, text) => `${hashes} ${text}`)
+  .replace(/(^[-])([^\s])/gm, (_, symbol, text) => `${symbol} ${text}`)
+  .replace(/(\*\*.*?\*\*)(\S)/g, (_, boldText, nextChar) => `${boldText} ${nextChar}`);
 
   // 导出pdf
   const exportPdf = async () => {

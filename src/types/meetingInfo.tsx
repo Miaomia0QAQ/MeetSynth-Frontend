@@ -1,4 +1,5 @@
 export interface meetingInfo {
+    id: string,
     title?: string,
     description?: string | null,
     startTime?: string | null,

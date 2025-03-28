@@ -6,6 +6,7 @@ const { useBreakpoint } = Grid;
 
 interface PermissionApplication {
     key: string;
+    userId?: string;
     username: string;
     email: string;
     avatar: string;
@@ -24,6 +25,7 @@ const PermissionsAdmin = () => {
     const pendingData: PermissionApplication[] = [
         {
             key: '1',
+            userId: '1',
             username: '张三',
             email: 'zhangsan@example.com',
             avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
@@ -36,6 +38,7 @@ const PermissionsAdmin = () => {
     const reviewedData: PermissionApplication[] = [
         {
             key: '2',
+            userId: '2',
             username: '李四',
             email: 'lisi@example.com',
             avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
@@ -45,6 +48,7 @@ const PermissionsAdmin = () => {
         },
         {
             key: '3',
+            userId: '3',
             username: '王五',
             email: 'wangwu@example.com',
             avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
@@ -65,7 +69,7 @@ const PermissionsAdmin = () => {
         },
         {
             title: 'ID',
-            dataIndex: 'key',
+            dataIndex: 'userId',
             key: 'userId',
         },
         {

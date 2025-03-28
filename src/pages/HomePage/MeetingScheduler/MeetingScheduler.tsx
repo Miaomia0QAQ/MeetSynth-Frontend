@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './MeetingScheduler.css';
 import { useNavigate } from 'react-router-dom';
-import { animate } from 'framer-motion';
 import { createMeetingAPI } from '../../../apis/meeting';
 import { message, Modal } from 'antd';
 
@@ -11,7 +10,6 @@ interface MeetingForm {
     leader: string;
     participants: string[];
     startTime: string;
-    files: File[];
 }
 
 interface MeetingSchedulerProps {
@@ -25,9 +23,7 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
         leader: '',
         participants: [],
         startTime: '',
-        files: []
     });
-
     const navigate = useNavigate();
     const containerRef = useRef<HTMLDivElement>(null);
     const formGroupsRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -91,16 +87,6 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
         }));
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files) {
-            setFormData(prev => ({
-                ...prev,
-                files: [...prev.files, ...Array.from(files)]
-            }));
-        }
-    };
-
     return (
         <div className="schedule-container" ref={containerRef}>
             <h1 className="header">预定会议</h1>
@@ -113,7 +99,6 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
                         { label: '负责人', name: 'leader', type: 'text', required: false },
                         { label: '参与人', name: 'participants', type: 'text', placeholder: '张三, 李四, 王五' },
                         { label: '开始时间', name: 'startTime', type: 'datetime-local', required: false },
-                        { label: '上传文件', name: 'files', type: 'file' },
                         { label: '会议简述', name: 'description', type: 'textarea', required: false },
                     ].map((field, index) => (
                         field.type === 'textarea' ? (
@@ -137,23 +122,14 @@ const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
                                 className="form-group"
                             >
                                 <label>{field.label}：</label>
-                                {field.type === 'file' ? (
-                                    <input
-                                        type="file"
-                                        onChange={handleFileUpload}
-                                        accept=".doc,.docx,.pdf"
-                                        multiple
-                                    />
-                                ) : (
-                                    <input
-                                        type={field.type}
-                                        name={field.name}
-                                        value={formData[field.name as keyof MeetingForm] as string}
-                                        onChange={handleInputChange}
-                                        required={field.required}
-                                        placeholder={field.placeholder}
-                                    />
-                                )}
+                                <input
+                                    type={field.type}
+                                    name={field.name}
+                                    value={formData[field.name as keyof MeetingForm] as string}
+                                    onChange={handleInputChange}
+                                    required={field.required}
+                                    placeholder={field.placeholder}
+                                />
                             </div>
                         )
                     ))}

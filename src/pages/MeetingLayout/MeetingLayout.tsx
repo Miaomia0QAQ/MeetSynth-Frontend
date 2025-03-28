@@ -1,7 +1,7 @@
-import { use, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HomeFilled, LeftCircleOutlined } from '@ant-design/icons';
 import './MeetingLayout.css';
-import { Splitter } from 'antd';
+import { message, Splitter } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import AISummary, { AISummaryRef } from './AISummary/AISummary';
 import Sidebar from './Siderbar/Siderbar';
@@ -9,8 +9,9 @@ import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SpeechTranscriber from './SpeechTranscriber/SpeechTranscriber';
-import { getMeetingAPI } from '../../apis/meeting';
+import { getMeetingAPI, saveTranscriptAPI } from '../../apis/meeting';
 import { meetingInfo } from '../../types/meetingInfo';
+import { debounce } from 'lodash-es';
 
 export interface TranscriptItem {
   text: string;
@@ -21,7 +22,7 @@ const MeetingLayout = () => {
   // 会议id
   const id = searchParams.get('id') || '';
   // 会议标题
-  const [info, setInfo] = useState<meetingInfo>({});
+  const [info, setInfo] = useState<meetingInfo>({ id: id });
   // 会议内容是否存在
   const [hasContent, setHasContent] = useState<boolean>(false);
   // 录音转文字内容
@@ -30,7 +31,10 @@ const MeetingLayout = () => {
   const [editingContent, setEditingContent] = useState('');
   // 左右版块大小
   const [panelSize, setPanelSize] = useState<(number | string)[]>(['100%', '0%']);
+  // 录音状态
   const [recorderState, setRecorderState] = useState<'record' | 'edit'>('record');
+  // 录音保存状态
+  const [isSaving, setIsSaving] = useState(false);
   /*
    下面是模态框相关状态
   */
@@ -44,7 +48,6 @@ const MeetingLayout = () => {
   // AI总结事件
   const handleSummarize = () => {
     if (panelSize[1] === '0%' || panelSize[1] === 0 || panelSize[1] === '0') {
-      summaryRef.current?.sendRequest(transcripts.map(item => item.text).join('\n'))
       setPanelSize(['50%', '50%']);
     }
   }
@@ -75,10 +78,6 @@ const MeetingLayout = () => {
     });
   }
 
-  const onStopRecording = () => {
-
-  };
-
   // 处理可编辑事件
   const handleEdit = (index: number) => {
     setEditingContent(transcripts[index].text || '')
@@ -89,7 +88,6 @@ const MeetingLayout = () => {
   const handleEditSubmit = (index: number) => {
     setTranscripts(prev => prev.map((item, i) => i === index ? { ...item, text: editingContent, editable: false } : item))
     setEditingContent('')
-    console.log(666)
   }
 
   // 处理编辑状态时的回车事件（提交）
@@ -111,6 +109,40 @@ const MeetingLayout = () => {
     return `${month}月${day}日`;
   }
 
+  // 获取会议信息
+  const getMeetingInfo = () => {
+    getMeetingAPI(id).then(res => {
+      if (res.code === 1) {
+        const { title, description, startTime, participants, leader, recording } = res.data;
+        setInfo({ ...info, title, description, startTime, participants, leader });
+        setTranscripts([{ text: recording, editable: false }]);
+      }
+    })
+  }
+
+  // 保存录音转译
+  const saveTranscript = useCallback(async (textContent: string) => {
+    try {
+      setIsSaving(true);
+      const res = await saveTranscriptAPI(id, textContent);
+      if (res.code !== 1) {
+        message.error(res.msg || '自动保存失败');
+      }
+    } catch (err) {
+      message.error('保存失败，请检查网络');
+      console.error('保存错误:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [id]);
+
+  const debouncedSave = useMemo(() =>
+    debounce((content: string) => {
+      if (isSaving) return; // 如果正在保存，则不执行
+      if (content) saveTranscript(content);
+    }, 5000)
+    , [saveTranscript]);
+
   /*
     下面是模态框的事件处理函数
   */
@@ -126,6 +158,7 @@ const MeetingLayout = () => {
 
   // 处理信息模态框的提交事件
   const handleInfoModalOk = () => {
+    getMeetingInfo();
     setIsInfoModalOpen(false);
   }
 
@@ -146,21 +179,38 @@ const MeetingLayout = () => {
 
   useEffect(() => {
     if (id && id !== '') {
-      getMeetingAPI(id).then(res => {
-        if (res.code === 1) {
-          const { title, description, startTime, participants, leader, recording } = res.data;
-          setInfo({ title, description, startTime, participants, leader });
-          setTranscripts([{ text: recording, editable: false }]);
-        }
-      })
+      getMeetingInfo();
     }
+    // 离开时强制保存最后一次修改
+    return () => {
+      debouncedSave.cancel();
+      // 离开时强制保存最后一次修改
+      const lastContent = transcripts
+        .map(t => t.text?.trim())
+        .join('\n');
+      if (lastContent) saveTranscript(lastContent);
+    };
   }, [])
 
   useEffect(() => {
-    if (transcripts.length > 0) {
+    if (transcripts.length > 0 && transcripts[0].text) {
       setHasContent(true);
     }
   }, [transcripts])
+
+  // 自动保存触发逻辑
+  useEffect(() => {
+    const content = transcripts
+      .map(t => t.text?.trim())
+      .filter(Boolean)
+      .join('\n');
+
+    if (content) {
+      debouncedSave(content);
+    }
+
+    return () => debouncedSave.cancel();
+  }, [transcripts, debouncedSave]);
 
   // 渲染
   return (
@@ -188,6 +238,7 @@ const MeetingLayout = () => {
           >
             <Splitter.Panel className="left-panel-wrapper" size={panelSize[0]}>
               <SpeechTranscriber
+                id={id}
                 title={info.title ? info.title : `${getDate()}会议`}
                 hasContent={hasContent}
                 transcripts={transcripts}
@@ -206,7 +257,7 @@ const MeetingLayout = () => {
             </Splitter.Panel>
 
             <Splitter.Panel className="right-panel" collapsible={true} size={panelSize[1]}>
-              <AISummary ref={summaryRef} />
+              <AISummary id={id} ref={summaryRef} />
             </Splitter.Panel>
 
           </Splitter>
@@ -225,12 +276,15 @@ const MeetingLayout = () => {
         isOpen={isInfoModalOpen}
         onCancel={handleInfoModalCancel}
         onOk={handleInfoModalOk}
+        info={info}
+        setInfo={setInfo}
       />
 
       <UploadModal
         isOpen={isUploadModalOpen}
         onCancel={handleUploadModalCancel}
         onOk={handleUploadModalOk}
+        id={id}
       />
 
     </div >

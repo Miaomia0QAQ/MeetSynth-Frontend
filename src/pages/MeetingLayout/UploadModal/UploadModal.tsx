@@ -1,12 +1,14 @@
 import { InboxOutlined } from '@ant-design/icons';
-import { message, Modal, Upload } from 'antd';
+import { message, Modal, Upload, UploadProps } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react'
+import { uploadFileAPI } from '../../../apis/meeting';
 
 interface UploadModalProps {
     isOpen: boolean;
     onCancel: () => void;
     onOk: () => void;
+    id: string;
 }
 
 const useStyle = createStyles(({ css }) => ({
@@ -133,7 +135,7 @@ const useStyle = createStyles(({ css }) => ({
         }
     `
 }));
-const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onCancel, onOk }) => {
+const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onCancel, onOk, id }) => {
     const { styles } = useStyle();
 
     const classNames = {
@@ -141,6 +143,41 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onCancel, onOk }) => 
         header: styles['info-modal-header'],
         footer: styles['info-modal-footer'],
         content: styles['info-modal-content'],
+    };
+
+    // 文件类型验证
+    const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+        const isAllowedType = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ].includes(file.type);
+
+        if (!isAllowedType) {
+            message.error('仅支持上传 PDF 和 DOC 文件!');
+            return Upload.LIST_IGNORE;
+        }
+        return true;
+    };
+
+    // 自定义上传处理
+    const customRequest: UploadProps['customRequest'] = async (options) => {
+        const { file, onProgress, onSuccess, onError } = options;
+
+        try {
+            // 模拟上传进度
+            onProgress?.({ percent: 0 });
+
+            // 调用上传接口
+            const res = await uploadFileAPI(id, file as File);
+
+            onProgress?.({ percent: 100 });
+            onSuccess?.(res, file);
+            message.success(`${(file as File).name} 上传成功`);
+        } catch (err) {
+            onError?.(err as Error | ProgressEvent<EventTarget>);
+            message.error(`${(file as File).name} 上传失败`);
+        }
     };
 
     return (
@@ -151,26 +188,24 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onCancel, onOk }) => 
             classNames={classNames}
             okText="确认"
             cancelText="取消"
-            width={800}  // 建议设置宽度以适应拖拽区域
+            width={800}
         >
             <Upload.Dragger
                 name="file"
                 multiple={true}
-                action="https://your-upload-api-url"  // 替换为你的上传接口URL
-                onChange={info => {
+                accept=".pdf,.doc,.docx"
+                beforeUpload={beforeUpload}
+                customRequest={customRequest}
+                onChange={(info) => {
+                    // 保留基础状态处理
                     const { status } = info.file;
-                    if (status !== 'uploading') {
-                        console.log(info.file, info.fileList);
-                    }
-                    if (status === 'done') {
-                        message.success(`${info.file.name} 文件上传成功`);
-                    } else if (status === 'error') {
+                    if (status === 'error') {
                         message.error(`${info.file.name} 文件上传失败`);
                     }
                 }}
                 style={{
                     padding: '20px',
-                    height: '200px',  // 设置拖拽区域高度
+                    height: '200px',
                     margin: '0 auto',
                     color: 'white'
                 }}
@@ -178,13 +213,15 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onCancel, onOk }) => 
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
                 </p>
-                <p className="ant-upload-text" style={{color: 'white'}}>点击或拖拽文件到此处上传</p>
-                <p className="ant-upload-hint" style={{color: 'rgba(159, 177, 238, 0.38)'}}>
-                    支持单文件或批量上传，严禁上传敏感数据
+                <p className="ant-upload-text" style={{ color: 'white' }}>
+                    点击或拖拽文件到此处上传
+                </p>
+                <p className="ant-upload-hint" style={{ color: 'rgba(159, 177, 238, 0.38)' }}>
+                    仅支持 PDF 和 DOC 格式文件，严禁上传敏感数据
                 </p>
             </Upload.Dragger>
         </Modal>
-    )
-}
+    );
+};
 
 export default UploadModal

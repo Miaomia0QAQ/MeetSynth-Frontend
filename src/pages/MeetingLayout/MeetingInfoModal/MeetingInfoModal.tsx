@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStyles } from 'antd-style';
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, message, Modal } from 'antd';
+import { meetingInfo } from '../../../types/meetingInfo';
+import { updateMeetingAPI } from '../../../apis/meeting';
 
 interface MeetingInfoModalProps {
     isOpen: boolean;
     onCancel: () => void;
     onOk: () => void;
+    info: meetingInfo;
+    setInfo: (info: meetingInfo) => void;
 }
 
 const useStyle = createStyles(({ css }) => ({
@@ -133,7 +137,7 @@ const useStyle = createStyles(({ css }) => ({
     `
 }));
 
-const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, onOk }) => {
+const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, onOk, info, setInfo }) => {
     // 表单提交 loading 状态
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const { styles } = useStyle();
@@ -154,20 +158,36 @@ const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, o
 
     const handleSubmit = () => {
         form.validateFields()
-            .then(values => {
-                form.resetFields();
+            .then((values) => {
                 setConfirmLoading(true);
-                // 进行数据处理
-                setTimeout(()=>{
-                    console.log('Received values of form: ', values);
+                updateMeetingAPI({...info, ...values}).then((res) => {
+                    if (res.code === 1) {
+                        message.success('修改成功');
+                    } else {
+                        message.error(res.msg || '修改失败');
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                }).finally(() => {
                     setConfirmLoading(false);
-                    onOk(); // 将表单值传递给外部处理
-                }, 2000)
+                    onOk();
+                });
             })
             .catch(info => {
                 console.log('Validate Failed:', info);
             });
     }
+
+    useEffect(() => {
+        form.setFieldsValue({
+            // 设置初始值
+            title: info.title,
+            description: info.description,
+            startTime: info.startTime,
+            participants: info.participants,
+            leader: info.leader,
+        });
+    }, [info]);
 
     return (
         <Modal
@@ -184,11 +204,9 @@ const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, o
             <Form
                 form={form}
                 layout="vertical"
-                initialValues={{
-                    // 可以设置初始值
-                }}
             >
                 <Form.Item
+                    key='title'
                     name="title"
                     label="会议标题"
                     className={styles.infoItem}
@@ -206,6 +224,7 @@ const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, o
                 </Form.Item>
 
                 <Form.Item
+                    key='participants'
                     name="participants"
                     label="参会人员"
                     className={styles.infoItem}
@@ -224,6 +243,7 @@ const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, o
                 </Form.Item>
 
                 <Form.Item
+                    key='leader'
                     name="leader"
                     label="会议负责人"
                     className={styles.infoItem}
@@ -242,6 +262,7 @@ const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, o
                 </Form.Item>
 
                 <Form.Item
+                    key='startTime'
                     name="startTime"
                     label="开始时间"
                     className={styles.infoItem}
@@ -258,6 +279,7 @@ const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, o
                 </Form.Item>
 
                 <Form.Item
+                    key='description'
                     name="description"
                     label="会议描述"
                     className={styles.infoItem}

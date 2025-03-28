@@ -10,25 +10,17 @@ import './AISummary.css'
 import MarkdownRenderer from './MarkdownRenderer/MarkdownRenderer'
 import request from '../../../utils/request'
 import MarkdownEditor from './MarkdownEditor/MarkdownEditor'
-import React from 'react'
+import { saveAISummaryAPI } from '../../../apis/meeting'
+import { Button, message } from 'antd'
+import { isEditContext } from './isEditContext'
 
 export interface AISummaryRef {
-    sendRequest: (content: string) => void
+    sendRequest: () => void
 }
 
 interface AISummaryProps {
-    // 可扩展的props接口
+    id: string,
 }
-
-type isEditContextType = {
-    isEdit: boolean,
-    setIsEdit: (value: boolean) => void
-};
-
-export const isEditContext = React.createContext<isEditContextType>({
-    isEdit: false,
-    setIsEdit: () => { }
-});
 
 const AISummary = forwardRef((
     props: AISummaryProps,
@@ -39,11 +31,12 @@ const AISummary = forwardRef((
     const [summary, setSummary] = useState<string>('')
     const eventSourceRef = useRef<EventSource | null>(null)
     const [isEdit, setIsEdit] = useState(false);
+    const [feedback, setFeedback] = useState('');
 
     // 暴露方法给父组件
     useImperativeHandle(ref, () => ({
-        sendRequest: (content: string) => {
-            handleSendRequest(content)
+        sendRequest: () => {
+            handleSendRequest()
         }
     }))
 
@@ -61,8 +54,8 @@ const AISummary = forwardRef((
     }
 
     // 发送请求的核心方法
-    const handleSendRequest = async (content: string) => {
-        if (!content.trim() || isLoading) return
+    const handleSendRequest = async () => {
+        if (isLoading) return
 
         try {
             setIsLoading(true)
@@ -72,7 +65,7 @@ const AISummary = forwardRef((
 
             // 建立SSE连接
             const eventSource = new EventSource(
-                `${request.defaults.baseURL}/ai/summary?message=${encodeURIComponent(content)}`
+                `${request.defaults.baseURL}/ai/summary?message=${feedback}&id=${props.id}`
             )
             eventSourceRef.current = eventSource
 
@@ -80,6 +73,7 @@ const AISummary = forwardRef((
             const handleMessage = (event: MessageEvent) => {
                 if (event.data === 'event: end') {
                     closeEventSource()
+                    saveAISummary()
                     setIsLoading(false)
                     return
                 }
@@ -112,6 +106,18 @@ const AISummary = forwardRef((
         }
     }
 
+    const saveAISummary = async () => {
+        saveAISummaryAPI(props.id, summary).then(res => {
+            if (res.code === 1) {
+            } else {
+                message.error(res.msg || '总结保存失败');
+            }
+        }).catch(err => {
+            message.error('总结保存失败，请检查网络');
+            console.log(err);
+        });
+    }
+
     // 组件卸载时清理连接
     useEffect(() => {
         return () => closeEventSource()
@@ -130,7 +136,7 @@ const AISummary = forwardRef((
                 {isEdit ?
                     <MarkdownEditor value={summary} onChange={setSummary} setIsEdit={setIsEdit} />
                     :
-                    <isEditContext.Provider value={{ isEdit, setIsEdit }}>
+                    <isEditContext.Provider value={{ feedback, setFeedback, isEdit, setIsEdit, handleSendRequest }}>
                         <MarkdownRenderer content={summary} />
                     </isEditContext.Provider>
                 }
