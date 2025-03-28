@@ -48,6 +48,7 @@ const MeetingLayout = () => {
   // AI总结事件
   const handleSummarize = () => {
     if (panelSize[1] === '0%' || panelSize[1] === 0 || panelSize[1] === '0') {
+      summaryRef.current?.sendRequest();
       setPanelSize(['50%', '50%']);
     }
   }
@@ -113,9 +114,10 @@ const MeetingLayout = () => {
   const getMeetingInfo = () => {
     getMeetingAPI(id).then(res => {
       if (res.code === 1) {
-        const { title, description, startTime, participants, leader, recording } = res.data;
+        const { title, description, startTime, participants, leader, recording, content } = res.data;
         setInfo({ ...info, title, description, startTime, participants, leader });
         setTranscripts([{ text: recording, editable: false }]);
+        summaryRef.current?.setSummary(content);
       }
     })
   }

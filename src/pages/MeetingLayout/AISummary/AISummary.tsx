@@ -11,11 +11,12 @@ import MarkdownRenderer from './MarkdownRenderer/MarkdownRenderer'
 import request from '../../../utils/request'
 import MarkdownEditor from './MarkdownEditor/MarkdownEditor'
 import { saveAISummaryAPI } from '../../../apis/meeting'
-import { Button, message } from 'antd'
+import { Alert, message, Spin } from 'antd'
 import { isEditContext } from './isEditContext'
 
 export interface AISummaryRef {
     sendRequest: () => void
+    setSummary: (newSummary: string) => void
 }
 
 interface AISummaryProps {
@@ -36,7 +37,12 @@ const AISummary = forwardRef((
     // 暴露方法给父组件
     useImperativeHandle(ref, () => ({
         sendRequest: () => {
-            handleSendRequest()
+            if (!summary || summary.trim() === '') {
+                handleSendRequest()
+            }
+        },
+        setSummary: (newSummary: string) => {
+            setSummary(newSummary)
         }
     }))
 
@@ -77,7 +83,6 @@ const AISummary = forwardRef((
                     setIsLoading(false)
                     return
                 }
-                console.log('SSE Message:', event.data)
                 handleStreamUpdate(event.data)
             }
 
@@ -118,18 +123,26 @@ const AISummary = forwardRef((
         });
     }
 
+    useEffect(() => {
+        if (!isEdit && summary && summary.trim() !== '') {
+            saveAISummary();
+        }
+    }, [isEdit])
+
     // 组件卸载时清理连接
     useEffect(() => {
-        return () => closeEventSource()
+        return () => {
+            closeEventSource()
+        }
     }, [])
 
     return (
         <div className='ai-summary-container'>
             {/* 加载指示器 */}
-            {isLoading && <div className="loading-indicator">总结生成中...</div>}
+            {isLoading && (!summary || summary.trim() === '') && <Spin style={{ position: 'absolute', top: '20px', left: '20px' }} />}
 
             {/* 错误提示 */}
-            {error && <div className="error-message">{error}</div>}
+            {error && <Alert message="服务器繁忙，请稍后重试" type="error" showIcon style={{ position: 'absolute', top: '20px', left: '20px' }} />}
 
             {/* 总结内容显示 */}
             <div className="summary-content">

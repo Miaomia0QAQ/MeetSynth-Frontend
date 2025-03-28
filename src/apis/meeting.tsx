@@ -86,13 +86,14 @@ export async function saveTranscriptAPI(id: string, transcript: string): Promise
 }
 
 // 保存ai总结
-export async function saveAISummaryAPI(id: string, summary: string): Promise<Result> {
+export async function saveAISummaryAPI(id: string, content: string): Promise<Result> {
+    console.log(id, content);
     return request({
         url: 'meeting/saveAISummary',
         method: 'post',
         params: {
             id,
-            content: summary,
+            content,
         }
     })
 }
@@ -108,6 +109,20 @@ export async function uploadFileAPI(id: string, file: File): Promise<Result> {
         data: formData,
         headers: {
             'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
+// 管理平台获取会议列表
+export async function getMeetingListAPI(page: number, pageSize: number, title?: string, username?: string): Promise<Result> {
+    return request({
+        url: 'meeting/admin/list',
+        method: 'get',
+        params: {
+            page,
+            pageSize,
+            ...(title && { title }),
+            ...(username && { username })
         }
     })
 }

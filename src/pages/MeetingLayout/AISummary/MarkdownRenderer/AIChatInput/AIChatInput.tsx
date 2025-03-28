@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import styles from './AiChatInput.module.css';
-import { ArrowUpOutlined, DownloadOutlined, EditFilled } from '@ant-design/icons';
+import { ArrowUpOutlined, DownloadOutlined, EditFilled, RedoOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { isEditContext } from '../../isEditContext';
 
@@ -18,6 +18,11 @@ const AIChatInput: React.FC<AIChatInputProps> = ({ onExportPdf }) => {
         }
     };
 
+    const handleRefresh = () => {
+        setFeedback('');
+        handleSendRequest();
+    }
+
     return (
         <div className={styles.background}>
             <div className={styles.container}>
@@ -34,6 +39,16 @@ const AIChatInput: React.FC<AIChatInputProps> = ({ onExportPdf }) => {
 
                 {/* 底部状态栏 */}
                 <div className={styles.footer}>
+                    <Tooltip title="重新生成">
+                        <Button
+                            type="text"
+                            shape="circle"
+                            icon={<RedoOutlined style={{ fontSize: '18px' }} />}
+                            style={{ border: 'none', backgroundColor: 'transparent', marginRight: '5px' }}
+                            className={styles.footerButton}
+                            onClick={handleRefresh}
+                        />
+                    </Tooltip>
                     <Tooltip title="导出">
                         <Button
                             type="text"

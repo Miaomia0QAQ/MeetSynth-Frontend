@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
     Table,
     Input,
@@ -20,6 +20,7 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
+import { useDebounce } from 'use-debounce';
 import { deleteUserAPI, getUserListAPI } from '../../../apis/user';
 
 const { Text } = Typography;
@@ -34,8 +35,8 @@ interface User {
 }
 
 const Users = () => {
-
     const [searchKey, setSearchKey] = useState('');
+    const [debouncedSearchKey] = useDebounce(searchKey, 500);
     const [showPasswordId, setShowPasswordId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -43,12 +44,53 @@ const Users = () => {
     const [total, setTotal] = useState(0);
     const [users, setUsers] = useState<User[]>([]);
 
+    // 获取用户列表
+    const getUserList = useCallback(async () => {
+        setLoading(true);
+        try {
+            const res = await getUserListAPI(page, pageSize, debouncedSearchKey);
+            if (res.code === 1) {
+                const formattedUsers = res.data.list.map((item: any) => ({
+                    id: item.id,
+                    username: item.username,
+                    email: item.email,
+                    password: item.password,
+                    avatar: item.avatarUrl,
+                    meetingCount: item.meetingCount
+                }));
+                setUsers(formattedUsers);
+                setTotal(res.data.total);
+            }
+        } catch (error) {
+            message.error('获取用户列表失败');
+        } finally {
+            setLoading(false);
+        }
+    }, [page, pageSize, debouncedSearchKey]);
+
+    // 删除用户
+    const deleteUser = async (id: string) => {
+        try {
+            const res = await deleteUserAPI(id);
+            if (res.code === 1) {
+                await getUserList();
+                message.success('用户已删除');
+            }
+        } catch (error) {
+            message.error('删除用户失败');
+        }
+    };
+
+    // 数据请求
+    useEffect(() => {
+        getUserList();
+    }, [getUserList]);
+
     // 导出Excel
     const handleExport = () => {
         setLoading(true);
-
         try {
-            const exportData = filteredUsers.map(user => ({
+            const exportData = users.map(user => ({
                 ID: user.id,
                 用户名: user.username,
                 邮箱: user.email,
@@ -74,39 +116,6 @@ const Users = () => {
         }
     };
 
-    // 获取用户列表
-    const getUserList = async () => {
-        getUserListAPI(page, pageSize).then((res) => {
-            if (res.code === 1) {
-                const formattedUsers = res.data.list.map((item: any) => ({
-                    id: item.id,
-                    username: item.username,
-                    email: item.email,
-                    password: item.password,
-                    avatar: item.avatarUrl,
-                    meetingCount: item.meetingCount
-                }));
-                setUsers(formattedUsers);
-                setTotal(res.data.total);
-            }
-        })
-    };
-
-    // 删除用户
-    const deleteUser = (id: string) => {
-        deleteUserAPI(id).then((res) => {
-            if (res.code === 1) {
-                getUserList();
-                message.success('用户已删除');
-            }
-        })
-    };
-
-    // 获取用户列表
-    useEffect(() => {
-        getUserList();
-    }, [])
-
     // 列配置
     const columns = [
         {
@@ -115,7 +124,7 @@ const Users = () => {
             key: 'avatar',
             width: 80,
             align: 'center' as const,
-            render: (text: string, record: User) => (
+            render: (_: string, record: User) => (
                 <Avatar
                     src={record.avatar}
                     icon={!record.avatar && <UserOutlined />}
@@ -194,11 +203,6 @@ const Users = () => {
         },
     ];
 
-    const filteredUsers = users.filter(user =>
-        user.username.toLowerCase().includes(searchKey.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchKey.toLowerCase())
-    );
-
     return (
         <Card
             title="用户管理"
@@ -219,18 +223,24 @@ const Users = () => {
                     allowClear
                     prefix={<SearchOutlined />}
                     style={{ width: 400 }}
-                    onChange={(e) => setSearchKey(e.target.value)}
+                    value={searchKey}
+                    onChange={(e) => {
+                        setSearchKey(e.target.value);
+                        setPage(1); // 重置到第一页
+                    }}
                 />
             </div>
 
             <Table
                 columns={columns}
-                dataSource={filteredUsers}
+                dataSource={users}
                 rowKey="id"
                 bordered
                 size="middle"
                 scroll={{ x: 1000 }}
+                loading={loading}
                 pagination={{
+                    current: page,
                     pageSize: pageSize,
                     showSizeChanger: true,
                     pageSizeOptions: ['5', '10', '20'],
@@ -238,6 +248,7 @@ const Users = () => {
                         setPage(page);
                         setPageSize(pageSize);
                     },
+                    total: total,
                     showTotal: () => `共 ${total} 条`,
                 }}
                 style={{
