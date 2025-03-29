@@ -20,3 +20,23 @@ export async function getUserActivityTrendsAPI(start: string, end: string): Prom
         }
     });
 }
+
+// 获取活跃用户数
+export async function getActiveUserCountAPI(): Promise<Result> {
+    return request({
+        url: 'system/activeUser',
+        method: 'get',
+    });
+}
+
+// 获取每日会议数
+export async function getDailyMeetingCountAPI(start: string, end: string): Promise<Result> {
+    return request({
+        url: 'system/meeting',
+        method: 'get',
+        params: {
+            start,
+            end
+        }
+    });
+}

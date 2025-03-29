@@ -18,38 +18,17 @@ import {
   XAxis
 } from 'recharts';
 import dayjs from 'dayjs';
-import { getMetricsAPI, getUserActivityTrendsAPI } from '../../../apis/system';
+import { 
+  getMetricsAPI, 
+  getUserActivityTrendsAPI, 
+  getActiveUserCountAPI,
+  getDailyMeetingCountAPI 
+} from '../../../apis/system';
 import { useDebounce } from 'use-debounce';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-
-// 模拟数据生成器
-const generateMockData = () => {
-  // // 用户增长数据
-  // const userActivityTrends = Array.from({ length: 7 }).map((_, i) => ({
-  //   date: dayjs().subtract(30 - i, 'day').format('YYYY/MM/DD'),
-  //   count: Math.floor(Math.random() * 100) + 50,
-  // }));
-  // console.log(JSON.stringify(userActivityTrends));
-
-  // 会议统计数据
-  const meetingData = [
-    { type: '视频会议', value: 65 },
-    { type: '语音会议', value: 25 },
-    { type: '文字会议', value: 10 },
-  ];
-
-  // 系统性能数据
-  const performanceData = [
-    { metric: 'CPU使用率', value: 45 },
-    { metric: '内存使用率', value: 65 },
-    { metric: '网络延迟', value: 28 },
-  ];
-
-  return { meetingData, performanceData };
-};
 
 const Dashboard = () => {
   const [metrics, setMetrics] = useState({
@@ -64,7 +43,11 @@ const Dashboard = () => {
     dayjs(),
   ]);
   const [userActivityData, setUserActivityData] = useState<Array<{ date: string, count: number }>>([]);
+  const [activeUserDistribution, setActiveUserDistribution] = useState<Array<{ type: string, value: number }>>([]);
+  const [dailyMeetings, setDailyMeetings] = useState<Array<{ date: string, count: number }>>([]);
   const [loading, setLoading] = useState(false);
+  const [activeUserLoading, setActiveUserLoading] = useState(false);
+  const [meetingLoading, setMeetingLoading] = useState(false);
   const [debouncedDateRange] = useDebounce(dateRange, 300);
 
   // 日期格式化工具
@@ -99,7 +82,7 @@ const Dashboard = () => {
         if (res.code === 1) {
           const formattedData = res.data.map((item: any) => ({
             ...item,
-            date: parseDate(item.date).format('MM/DD') // 格式化显示
+            date: parseDate(item.date).format('MM/DD')
           }));
           setUserActivityData(formattedData);
         }
@@ -112,6 +95,56 @@ const Dashboard = () => {
 
     fetchActivityData();
   }, [debouncedDateRange]);
+
+  // 获取每日会议数据
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      setMeetingLoading(true);
+      try {
+        const [start, end] = debouncedDateRange;
+        const res = await getDailyMeetingCountAPI(
+          formatDate(start),
+          formatDate(end)
+        );
+
+        if (res.code === 1) {
+          const formattedData = res.data.map((item: any) => ({
+            ...item,
+            date: parseDate(item.date).format('MM/DD')
+          }));
+          setDailyMeetings(formattedData);
+        }
+      } catch (error) {
+        console.error('获取会议数据失败', error);
+      } finally {
+        setMeetingLoading(false);
+      }
+    };
+
+    fetchMeetings();
+  }, [debouncedDateRange]);
+
+  // 获取活跃用户分布数据
+  useEffect(() => {
+    const fetchActiveUsers = async () => {
+      setActiveUserLoading(true);
+      try {
+        const res = await getActiveUserCountAPI();
+        if (res.code === 1) {
+          const { active, inactive } = res.data;
+          setActiveUserDistribution([
+            { type: '活跃用户', value: active },
+            { type: '非活跃用户', value: inactive },
+          ]);
+        }
+      } catch (error) {
+        console.error('获取活跃用户分布失败', error);
+      } finally {
+        setActiveUserLoading(false);
+      }
+    };
+    fetchActiveUsers();
+  }, []);
 
   // 处理时间范围切换
   const handleTimeRangeChange = (value: 'week' | 'month') => {
@@ -134,12 +167,6 @@ const Dashboard = () => {
   const disabledDate = (current: dayjs.Dayjs) => {
     return current > dayjs().endOf('day');
   };
-
-  // 生成模拟数据
-  const { meetingData, performanceData } = useMemo(
-    generateMockData,
-    [timeRange, dateRange]
-  );
 
   return (
     <div style={{ padding: 24 }}>
@@ -208,74 +235,87 @@ const Dashboard = () => {
       </Row>
 
       {/* 数据可视化区域 */}
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={12}>
-            <Card title="用户活跃度趋势">
-              <Spin spinning={loading}>
-                <div style={{ height: 300 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={userActivityData}>
-                      <XAxis
-                        dataKey="date"
-                        tick={{ fontSize: 12 }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="count"
-                        stroke="#7265e6"
-                        strokeWidth={2}
-                        name="活跃用户数"
-                      />
-                      <Tooltip
-                        labelFormatter={(value) => `日期: ${value}`}
-                        formatter={(value) => [`${value} 人`, '活跃数']}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </Spin>
-            </Card>
-          </Col>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} md={12}>
+          <Card title="用户活跃度趋势">
+            <Spin spinning={loading}>
+              <div style={{ height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={userActivityData}>
+                    <XAxis dataKey="date" />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#7265e6"
+                      strokeWidth={2}
+                      name="活跃用户数"
+                    />
+                    <Tooltip
+                      labelFormatter={(value) => `日期: ${value}`}
+                      formatter={(value) => [`${value} 人`, '活跃数']}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </Spin>
+          </Card>
+        </Col>
 
-          <Col xs={24} md={12}>
-            <Card title="会议类型分布">
+        <Col xs={24} md={12}>
+          <Card title="活跃用户分布">
+            <Spin spinning={activeUserLoading}>
               <div style={{ height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={meetingData}
+                      data={activeUserDistribution}
                       dataKey="value"
                       nameKey="type"
                       cx="50%"
                       cy="50%"
                       outerRadius={80}
                       fill="#7265e6"
-                      label
+                      label={({ type, percent }) => 
+                        `${type}: ${(percent * 100).toFixed(0)}%`
+                      }
                     />
-                    <Tooltip />
+                    <Tooltip 
+                      formatter={(value: number) => [`${value} 人`, '用户数']}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-            </Card>
-          </Col>
+            </Spin>
+          </Card>
+        </Col>
 
-          <Col xs={24}>
-            <Card title="系统性能指标">
+        <Col xs={24}>
+          <Card title="每日会议数量">
+            <Spin spinning={meetingLoading}>
               <div style={{ height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={performanceData}>
+                  <BarChart data={dailyMeetings}>
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fontSize: 12 }}
+                    />
                     <Bar
-                      dataKey="value"
+                      dataKey="count"
                       fill="#7265e6"
+                      name="会议数量"
                       radius={[4, 4, 0, 0]}
                     />
-                    <Tooltip />
+                    <Tooltip
+                      labelFormatter={(value) => `日期: ${value}`}
+                      formatter={(value) => [`${value} 次`, '会议数']}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-            </Card>
-          </Col>
-        </Row>
+            </Spin>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };
