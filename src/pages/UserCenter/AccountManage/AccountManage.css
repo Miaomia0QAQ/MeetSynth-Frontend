@@ -67,6 +67,34 @@
         color: #5A6B7D;
     }
 
+    /* 申请管理员按钮样式 */
+    .apply-admin-btn {
+        width: 200px;
+        height: 40px;
+        border-radius: 8px;
+        font-weight: 500;
+        background: white;
+        border: 2px solid #3A7B9E;
+        color: #3A7B9E;
+    }
+
+    .apply-admin-btn:hover {
+        background: #e8e9e9 !important;
+        border-color: #2C3E50 !important;
+        color: #2C3E50 !important;
+    }
+
+    /* 适配对话框样式 */
+    .ant-modal-body .ant-form-item-label label {
+        color: #2C3E50 !important;
+        font-weight: 500 !important;
+    }
+
+    .ant-modal-body textarea {
+        border-radius: 6px !important;
+        padding: 12px !important;
+    }
+
     /* 危险区域样式 */
     .danger-zone {
         background: #FEF5F5;

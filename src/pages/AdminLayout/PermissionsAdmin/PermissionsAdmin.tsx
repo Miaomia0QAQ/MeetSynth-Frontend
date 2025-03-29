@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Tabs, Table, Avatar, Tag, Button, Space, Grid, Form, Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { Tabs, Table, Avatar, Tag, Button, Space, Grid, Form, Modal, message } from 'antd';
 import type { TabsProps, TableColumnsType } from 'antd';
+import { getPendingApplicationsAPI, getReviewedApplicationsAPI, submitReviewResultAPI } from '../../../apis/permission';
 
 const { useBreakpoint } = Grid;
 
 interface PermissionApplication {
-    key: string;
+    key: number;
     userId?: string;
     username: string;
     email: string;
@@ -21,44 +22,107 @@ const PermissionsAdmin = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const screens = useBreakpoint();
 
-    // 模拟数据
-    const pendingData: PermissionApplication[] = [
-        {
-            key: '1',
-            userId: '1',
-            username: '张三',
-            email: 'zhangsan@example.com',
-            avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-            reason: '需要管理用户权限需要管理用户权限需要管理用户权限需要管理用户权限需要管理用户权限需要管理用户权限',
-            status: 'pending'
-        },
-        // 更多数据...
-    ];
+    // 分页状态管理
+    const [pendingState, setPendingState] = useState({
+        data: [] as PermissionApplication[],
+        pagination: { current: 1, pageSize: 10, total: 0 },
+        loading: false
+    });
 
-    const reviewedData: PermissionApplication[] = [
-        {
-            key: '2',
-            userId: '2',
-            username: '李四',
-            email: 'lisi@example.com',
-            avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-            reason: '需要内容审核权限',
-            status: 'approved',
-            reviewer: '管理员'
-        },
-        {
-            key: '3',
-            userId: '3',
-            username: '王五',
-            email: 'wangwu@example.com',
-            avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-            reason: '需要内容审核权限',
-            status: 'approved',
-            reviewer: '管理员'
-        },
-    ];
+    const [reviewedState, setReviewedState] = useState({
+        data: [] as PermissionApplication[],
+        pagination: { current: 1, pageSize: 10, total: 0 },
+        loading: false
+    });
 
-    // 公共列定义
+    // 数据获取方法
+    const fetchData = async (type: 'pending' | 'reviewed', pagination: any) => {
+        const stateUpdater = type === 'pending'
+            ? setPendingState
+            : setReviewedState;
+
+        stateUpdater(prev => ({ ...prev, loading: true }));
+
+        try {
+            const apiFn = type === 'pending'
+                ? getPendingApplicationsAPI
+                : getReviewedApplicationsAPI;
+
+            const res = await apiFn(
+                pagination.current,
+                pagination.pageSize
+            );
+
+            if (res.code === 1) {
+                const mappedData = res.data.list.map((item: any) => ({
+                    key: item.id,
+                    userId: item.userId,
+                    username: item.username,
+                    email: item.email,
+                    avatar: item.avatar,
+                    reason: item.reason,
+                    status: item.status,
+                    reviewer: item.reviewer
+                }));
+
+                stateUpdater(prev => ({
+                    ...prev,
+                    data: mappedData,
+                    pagination: {
+                        ...prev.pagination,
+                        total: res.data.total
+                    },
+                    loading: false
+                }));
+            }
+        } catch (error) {
+            message.error('数据加载失败');
+            stateUpdater(prev => ({ ...prev, loading: false }));
+        }
+    };
+
+    // 提交审核结果
+    const handleSubmitReview = async (key: number, status: 'approved' | 'rejected') => {
+        console.log(key, status);
+        submitReviewResultAPI(key, status).then(res => {
+            if (res.code === 1) {
+                message.success('审核结果提交成功');
+                fetchData(activeTab === '1' ? 'pending' : 'reviewed', {
+                    current: activeTab === '1' ? pendingState.pagination.current : reviewedState.pagination.current,
+                    pageSize: activeTab === '1' ? pendingState.pagination.pageSize : reviewedState.pagination.pageSize
+                });
+            } else {
+                message.error('审核结果提交失败');
+            }
+        })
+    };
+
+    // 标签页切换处理
+    useEffect(() => {
+        const type = activeTab === '1' ? 'pending' : 'reviewed';
+        const pagination = activeTab === '1'
+            ? pendingState.pagination
+            : reviewedState.pagination;
+
+        fetchData(type, pagination);
+    }, [activeTab, pendingState.pagination.current, reviewedState.pagination.current]);
+
+    // 分页变化处理
+    const handlePaginationChange = (page: number, pageSize: number) => {
+        if (activeTab === '1') {
+            setPendingState(prev => ({
+                ...prev,
+                pagination: { ...prev.pagination, current: page, pageSize }
+            }));
+        } else {
+            setReviewedState(prev => ({
+                ...prev,
+                pagination: { ...prev.pagination, current: page, pageSize }
+            }));
+        }
+    };
+
+    // 公共列定义（需放置在组件内部）
     const commonColumns: TableColumnsType<PermissionApplication> = [
         {
             title: '头像',
@@ -68,30 +132,35 @@ const PermissionsAdmin = () => {
             render: (url) => <Avatar src={url} size="large" />
         },
         {
-            title: 'ID',
+            title: '用户ID',
             dataIndex: 'userId',
             key: 'userId',
+            width: 120
         },
         {
             title: '用户名',
             dataIndex: 'username',
             key: 'username',
+            width: 150
         },
         {
             title: '邮箱',
             dataIndex: 'email',
             key: 'email',
+            width: 200
         },
         {
             title: '申请理由',
             dataIndex: 'reason',
             key: 'reason',
-            ellipsis: true
+            ellipsis: true,
+            width: 250
         },
         {
             title: '状态',
             dataIndex: 'status',
             key: 'status',
+            width: 120,
             render: (status: 'pending' | 'approved' | 'rejected') => {
                 const statusMap = {
                     pending: { color: 'processing', text: '审核中' },
@@ -103,13 +172,14 @@ const PermissionsAdmin = () => {
         }
     ];
 
-    // 审核中专属列
+    // 审核中专属列（带操作按钮）
     const pendingColumns: TableColumnsType<PermissionApplication> = [
         ...commonColumns,
         {
             title: '操作',
             key: 'action',
             fixed: 'right',
+            width: 200,
             render: (_, record) => (
                 <Space>
                     <Button
@@ -119,50 +189,70 @@ const PermissionsAdmin = () => {
                     >
                         查看
                     </Button>
-                    <Button type="link" size="small" style={{ color: '#52c41a' }}>同意</Button>
-                    <Button type="link" size="small" danger>拒绝</Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        style={{ color: '#52c41a' }}
+                        onClick={() => handleSubmitReview(record.key, 'approved')}
+                    >
+                        同意
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        danger
+                        onClick={() => handleSubmitReview(record.key, 'rejected')}
+                    >
+                        拒绝
+                    </Button>
                 </Space>
             )
         }
     ];
 
-    // 已审核专属列
+    // 已审核专属列（显示审核人）
     const reviewedColumns: TableColumnsType<PermissionApplication> = [
         ...commonColumns,
         {
             title: '审核人',
             dataIndex: 'reviewer',
             key: 'reviewer',
-            width: 120
+            width: 150,
+            render: (reviewer?: string) => reviewer || '系统自动处理'
         }
     ];
 
+    // 动态表格配置
+    const getTableConfig = () => {
+        const isPending = activeTab === '1';
+        const { data, pagination, loading } = isPending ? pendingState : reviewedState;
+
+        return {
+            columns: isPending ? pendingColumns : reviewedColumns,
+            dataSource: data,
+            loading,
+            pagination: {
+                ...pagination,
+                onChange: handlePaginationChange,
+                showSizeChanger: true,
+                showTotal: (total: number) => `共 ${total} 条`
+            },
+            scroll: { x: 800 },
+            bordered: true
+        };
+    };
+
+    // 更新标签页配置
     const items: TabsProps['items'] = [
         {
             key: '1',
-            label: `审核中 (${pendingData.length})`,
-            children: (
-                <Table
-                    columns={pendingColumns}
-                    dataSource={pendingData}
-                    scroll={{ x: 800 }}
-                    pagination={false}
-                    bordered
-                />
-            )
+            label: `审核中 (${pendingState.pagination.total})`,
+            children: <Table {...getTableConfig()} />
         },
         {
             key: '2',
-            label: `已审核 (${reviewedData.length})`,
-            children: (
-                <Table
-                    columns={reviewedColumns}
-                    dataSource={reviewedData}
-                    scroll={{ x: 800 }}
-                    pagination={false}
-                    bordered
-                />
-            )
+            label: `已审核 (${reviewedState.pagination.total})`,
+            children: <Table {...getTableConfig()} />
         }
     ];
 

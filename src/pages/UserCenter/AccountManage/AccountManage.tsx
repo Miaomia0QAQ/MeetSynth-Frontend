@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Avatar, List, Button, Popconfirm, Input, Space, message } from 'antd';
-import { EditOutlined, MailOutlined, LockOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Avatar, List, Button, Popconfirm, Input, Space, message, Modal, Form, notification } from 'antd';
+import { EditOutlined, MailOutlined, LockOutlined, DeleteOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import './AccountManage.css';
 import { deleteAccountAPI, getUserInfoAPI, updateUsernameAPI } from '../../../apis/user';
+import { applyForAdminAPI } from '../../../apis/permission';
+
+notification.config({
+  placement: 'topRight',
+  top: 64,
+  duration: 4,
+});
 
 const AccountManage = () => {
   const [username, setUsername] = useState('');
@@ -11,6 +18,9 @@ const AccountManage = () => {
   const [avatar, setAvatar] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [tempUsername, setTempUsername] = useState(username);
+  const [applyModalVisible, setApplyModalVisible] = useState(false);
+  const [applyReason, setApplyReason] = useState('');
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   // 模拟数据
@@ -67,6 +77,30 @@ const AccountManage = () => {
       }
     });
   }
+
+  // 管理员申请处理
+  const handleApplyAdmin = async () => {
+    try {
+      const res = await applyForAdminAPI(applyReason);
+      if (res.code === 1) {
+        message.success('申请已提交');
+        setApplyModalVisible(false);
+        setApplyReason('');
+      } else {
+        notification.error({
+          message: '提交失败',
+          description: res.msg || '服务器拒绝申请请求',
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: '请求失败',
+        description: '网络连接异常，请检查网络设置',
+      });
+    } finally {
+      setApplyModalVisible(false);
+    }
+  };
 
   return (
     <div className="account-container">
@@ -133,6 +167,18 @@ const AccountManage = () => {
         </List.Item>
       </List>
 
+
+      <h2 className="section-title">权限申请</h2>
+      {/* 新增申请管理员按钮 */}
+      <Button
+        type="primary"
+        icon={<SafetyOutlined />}
+        className="apply-admin-btn"
+        onClick={() => setApplyModalVisible(true)}
+      >
+        申请成为管理员
+      </Button>
+
       {/* 账号注销板块 */}
       <h2 className="section-title">风险操作</h2>
       <Popconfirm
@@ -152,6 +198,42 @@ const AccountManage = () => {
           注销账号
         </Button>
       </Popconfirm>
+
+      {/* 申请管理员对话框 */}
+      <Modal
+        title="管理员权限申请"
+        open={applyModalVisible}
+        onCancel={() => {
+          setApplyModalVisible(false);
+          form.resetFields();
+        }}
+        onOk={() => form.submit()}
+        okText="提交申请"
+        cancelText="取消"
+        destroyOnClose
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleApplyAdmin}
+          initialValues={{ reason: '' }}
+        >
+          <Form.Item
+            label="申请理由"
+            name="reason"
+            rules={[{ required: true, message: '请填写申请理由' }]}
+          >
+            <Input.TextArea
+              rows={4}
+              placeholder="请详细说明您需要管理员权限的原因"
+              maxLength={200}
+              showCount
+              value={applyReason}
+              onChange={(e) => setApplyReason(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
