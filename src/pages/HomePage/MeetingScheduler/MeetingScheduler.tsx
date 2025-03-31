@@ -3,6 +3,7 @@ import './MeetingScheduler.css';
 import { useNavigate } from 'react-router-dom';
 import { createMeetingAPI } from '../../../apis/meeting';
 import { message, Modal } from 'antd';
+import { CreateMeetingParams } from '../../../types/api';
 
 interface MeetingForm {
     title: string;
@@ -17,11 +18,11 @@ interface MeetingSchedulerProps {
 }
 
 const MeetingScheduler = ({ activeSection }: MeetingSchedulerProps) => {
-    const [formData, setFormData] = useState<MeetingForm>({
+    const [formData, setFormData] = useState<CreateMeetingParams>({
         title: '',
         description: '',
         leader: '',
-        participants: [],
+        participants: '',
         startTime: '',
     });
     const navigate = useNavigate();
