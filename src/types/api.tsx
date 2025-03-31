@@ -9,7 +9,7 @@ export interface Result<T = any> {
 export interface CreateMeetingParams {
     title?: string;         // 会议标题
     description?: string;   // 会议描述
-    participants?: string[]; // 参会人员列表
+    participants?: string; // 参会人员列表
     leader?: string;        // 负责人
     startTime?: string;     // 开始时间（格式：yyyy-mm-dd hh:mm:ss）
 }

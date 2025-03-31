@@ -198,3 +198,206 @@
         color: #1565c0 !important;
     }
 }
+
+/* 创建会议弹窗样式 */
+.my-meeting-modal {
+    .meeting-modal .ant-modal-content {
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }
+
+    .meeting-modal .ant-modal-header {
+        background: var(--light-bg) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    .meeting-modal .ant-modal-title {
+        color: var(--text-dark) !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+    }
+
+    .modal-form-wrapper {
+        padding: 20px 0 !important;
+    }
+
+    .modal-form-wrapper .form-container {
+        display: grid !important;
+        gap: 18px !important;
+    }
+
+    .modal-form-wrapper .form-group {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .modal-form-wrapper .form-group label {
+        width: 80px !important;
+        color: var(--text-medium) !important;
+        flex-shrink: 0 !important;
+    }
+
+    .modal-form-wrapper input,
+    .modal-form-wrapper textarea {
+        flex: 1 !important;
+        padding: 8px 12px !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 8px !important;
+        transition: all 0.3s !important;
+    }
+
+    .modal-form-wrapper input:focus,
+    .modal-form-wrapper textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(90, 127, 158, 0.1);
+    }
+
+    .modal-form-wrapper .description {
+        align-items: flex-start !important;
+    }
+
+    .modal-form-wrapper textarea {
+        height: 80px !important;
+        resize: vertical !important;
+    }
+
+    .ant-modal-content {
+        background: var(--light-bg) !important;
+        border-radius: 12px !important;
+        border: 1px solid var(--border-color) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .ant-modal-header {
+        background: var(--light-bg) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .ant-modal-title {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+    }
+
+    .ant-modal-close-x {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .ant-modal-close:hover .ant-modal-close-x {
+        color: white !important;
+    }
+
+    /* 按钮样式覆盖 */
+    .ant-btn-primary {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        border-radius: 8px !important;
+        padding: 6px 20px !important;
+        font-weight: 500 !important;
+        color: white !important;
+    }
+
+    .ant-btn-primary:hover {
+        background: #2E6580 !important;
+        border-color: #2E6580 !important;
+    }
+
+    .ant-btn-default {
+        background: var(--secondary-color) !important;
+        border-color: var(--secondary-color) !important;
+        color: white !important;
+        border-radius: 8px !important;
+        padding: 6px 20px !important;
+    }
+
+    .ant-btn-default:hover {
+        background: #7A95AB !important;
+        border-color: #7A95AB !important;
+        color: white !important;
+    }
+
+    /* 输入框聚焦状态 */
+    .ant-input:focus,
+    .ant-input-focused {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 2px rgba(90, 127, 158, 0.2) !important;
+    }
+
+    /* 上传区域样式 */
+    .upload-content-wrapper {
+        padding: 24px 0;
+    }
+
+    .ant-upload.ant-upload-drag {
+        background: var(--light-bg);
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+
+    .ant-upload.ant-upload-drag:hover {
+        border-color: var(--primary-color);
+        background: rgba(90, 127, 158, 0.05);
+    }
+
+    .uploader-inner {
+        padding: 32px;
+        text-align: center;
+    }
+
+    .upload-title {
+        color: var(--text-dark);
+        font-size: 16px;
+        margin: 16px 0 8px;
+        font-weight: 500;
+    }
+
+    .upload-subtitle {
+        color: var(--text-medium);
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .upload-tip {
+        color: var(--text-light);
+        font-size: 12px;
+        margin-top: 16px;
+    }
+
+    /* 特性卡片 */
+    .feature-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 24px;
+    }
+
+    .feature-card {
+        background: var(--light-bg);
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid var(--border-color);
+    }
+
+    .feature-card h4 {
+        color: var(--primary-color);
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .feature-card p {
+        color: var(--text-medium);
+        margin: 0;
+        font-size: 13px;
+    }
+
+    /* 加载状态 */
+    .ant-spin-container {
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}

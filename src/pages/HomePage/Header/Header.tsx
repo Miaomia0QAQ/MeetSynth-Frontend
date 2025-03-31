@@ -28,45 +28,51 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
     navigate('/userCenter/info/account');
   };
 
-  // 头像下拉框菜单
-  const items: MenuProps['items'] = [
-    {
-      label: (
-        <a onClick={onUserCenterClick}>
-          用户中心
-        </a>
-      ),
-      key: '0',
-    },
-    {
-      label: (
-        <a onClick={() => { navigate('/userCenter/meetings') }}>
-          我的会议
-        </a>
-      ),
-      key: '1',
-    },
-    {
-      label: (
-        <a onClick={() => { navigate('/admin') }}>
-          管理后台
-        </a>
-      ),
-      key: '2',
-      disabled: userInfo?.role === 'admin'
-    },
-    {
-      type: 'divider',
-    },
-    {
-      label: (
-        <a onClick={handleLogout}>
-          退出登录
-        </a>
-      ),
-      key: '3',
-    },
-  ];
+  // 根据用户信息动态生成菜单项
+  const generateMenuItems = () => {
+    const isEmpty = !userInfo || Object.keys(userInfo).length === 0;
+
+    if (isEmpty) {
+      return [
+        {
+          label: <a onClick={() => navigate('/login')}>去登录</a>,
+          key: 'login',
+        },
+      ];
+    }
+
+    const baseItems: MenuProps['items'] = [
+      {
+        label: <a onClick={onUserCenterClick}>用户中心</a>,
+        key: 'user-center',
+      },
+      {
+        label: <a onClick={() => navigate('/userCenter/meetings')}>我的会议</a>,
+        key: 'my-meetings',
+      },
+    ];
+
+    // 当角色为'1'时添加管理后台项
+    if (userInfo.role === '1') {
+      baseItems.push({
+        label: <a onClick={() => navigate('/admin')}>管理后台</a>,
+        key: 'admin',
+      });
+    }
+
+    baseItems.push(
+      { type: 'divider' },
+      {
+        label: <a onClick={handleLogout}>退出登录</a>,
+        key: 'logout',
+      }
+    );
+
+    return baseItems;
+  };
+
+  // 使用生成后的菜单项
+  const items: MenuProps['items'] = generateMenuItems();
 
   // 菜单项被点击事件
   const handleItemClick = (targetId: string) => {
