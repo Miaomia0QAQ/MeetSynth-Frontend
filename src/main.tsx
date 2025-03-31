@@ -4,7 +4,6 @@ import './index.css'
 // import './theme.less'
 import { RouterProvider } from 'react-router-dom'
 import router from './router.tsx'
-import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

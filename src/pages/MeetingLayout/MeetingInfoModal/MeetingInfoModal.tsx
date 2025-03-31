@@ -137,7 +137,7 @@ const useStyle = createStyles(({ css }) => ({
     `
 }));
 
-const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, onOk, info, setInfo }) => {
+const MeetingInfoModal: React.FC<MeetingInfoModalProps> = ({ isOpen, onCancel, onOk, info }) => {
     // 表单提交 loading 状态
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const { styles } = useStyle();

@@ -4,7 +4,6 @@ import {
   AudioOutlined,
   PlayCircleOutlined,
   PauseCircleOutlined,
-  StopOutlined,
   EditOutlined,
 } from '@ant-design/icons';
 

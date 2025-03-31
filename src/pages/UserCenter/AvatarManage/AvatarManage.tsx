@@ -2,9 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import './AvatarManage.css'
 import { UploadOutlined, PictureOutlined, UserOutlined } from '@ant-design/icons'
 import { Upload, message, UploadFile, Avatar } from 'antd'
-import type { UploadChangeParam } from 'antd/es/upload'
 import { getUserInfoAPI, updateAvatarAPI } from '../../../apis/user'
-import type { RcFile } from 'antd/es/upload/interface';
 
 const AvatarManager: FC = () => {
   // const userInfo = useSelector((state: RootState) => state.user.userInfo)

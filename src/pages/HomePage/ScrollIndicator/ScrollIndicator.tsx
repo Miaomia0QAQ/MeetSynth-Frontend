@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import "./ScrollIndicator.css";
 
 interface ScrollIndicatorProps {

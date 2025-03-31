@@ -1,4 +1,4 @@
-import { Avatar, message } from 'antd';
+import { Avatar } from 'antd';
 import { DeleteOutlined, EditOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import AudioRecorder from './AudioRecorder/AudioRecorder';
@@ -7,7 +7,6 @@ import './SpeechTranscriber.css';
 import { hex_md5 } from '../../../utils/md5';
 import CryptoJS from 'crypto-js';
 import { TranscriptItem } from '../MeetingLayout';
-import { saveTranscriptAPI } from '../../../apis/meeting';
 
 type TranscribeStatus = 'UNDEFINED' | 'CONNECTING' | 'OPEN' | 'CLOSING' | 'CLOSED';
 
@@ -33,7 +32,6 @@ interface SpeechTranscriberProps {
 }
 
 const SpeechTranscriber = ({
-    id,
     title,
     hasContent,
     transcripts,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion';
 import styles from './LoginPage.module.css'
-import { getUserInfoAPI, loginAPI, registerAPI, sendcaptchaAPI } from '../../apis/user';
+import { loginAPI, registerAPI, sendcaptchaAPI } from '../../apis/user';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
