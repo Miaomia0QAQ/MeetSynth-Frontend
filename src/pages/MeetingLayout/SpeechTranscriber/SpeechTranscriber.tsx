@@ -58,7 +58,7 @@ const SpeechTranscriber = ({
 
     // 初始化录音组件和websocket实例
     useEffect(() => {
-        recorderRef.current = new window.RecorderManager('../../dist');
+        recorderRef.current = new window.RecorderManager('../../../../recordermanager');
         const recorder = recorderRef.current;
         recorder.onStart = () => setStatus('OPEN');
 
