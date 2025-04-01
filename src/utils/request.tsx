@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
+
 // 创建 axios 实例
 const request = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 });
 
@@ -16,14 +17,14 @@ request.interceptors.request.use(config => {
 
 // 响应拦截器（统一处理 Result 结构）
 request.interceptors.response.use(
-    (response: AxiosResponse) => {
-      return response.data;
-    },
-    (error) => {
-      // 处理网络错误（如 500、404）
-      console.error('网络错误:', error.message);
-      return Promise.reject(error);
-    }
-  );
+  (response: AxiosResponse) => {
+    return response.data;
+  },
+  (error) => {
+    // 处理网络错误（如 500、404）
+    console.error('网络错误:', error.message);
+    return Promise.reject(error);
+  }
+);
 
 export default request

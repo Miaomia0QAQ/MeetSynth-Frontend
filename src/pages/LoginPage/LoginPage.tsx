@@ -67,6 +67,8 @@ const LoginPage: React.FC = () => {
       if (res.code === 1) {
         localStorage.setItem('token', res.data.token);
         navigate('/')
+      } else {
+        message.error(res.msg || '登录失败');
       }
     } catch (error) {
       message.error("登录失败，请检查网络连接")
@@ -83,9 +85,10 @@ const LoginPage: React.FC = () => {
         message.success('注册成功，请登录');
         handleChangeLoginState();
       } else {
-        message.error(res.msg);
+        message.error(res.msg || '注册失败');
       }
     } catch (error) {
+      message.error("注册失败，请检查网络连接")
       console.error(error);
     }
   }
