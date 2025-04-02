@@ -1,12 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 
-// 创建 axios 实例
 const request = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 });
 
-// 请求拦截器（可添加 token）
 request.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -15,16 +13,29 @@ request.interceptors.request.use(config => {
   return config;
 });
 
-// 响应拦截器（统一处理 Result 结构）
 request.interceptors.response.use(
   (response: AxiosResponse) => {
+    console.log('响应数据:', response);
     return response.data;
   },
   (error) => {
-    // 处理网络错误（如 500、404）
-    console.error('网络错误:', error.message);
+    console.log('请求错误:', error);
+    if (error.response) {
+      console.log('请求错误:', error.response);
+      // 处理 403 错误
+      if (error.response.status === 403) {
+        // 跳转到权限不足页面
+        window.location.href = '/forbidden';
+        return Promise.reject(error);
+      }
+      
+      // 其他错误处理
+      console.error('请求错误:', error.response.data);
+    } else {
+      console.error('网络错误:', error.message);
+    }
     return Promise.reject(error);
   }
 );
 
-export default request
+export default request;

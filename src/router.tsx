@@ -14,6 +14,7 @@ import AvatarManage from "./pages/UserCenter/AvatarManage/AvatarManage";
 import PasswordChange from "./pages/UserCenter/PasswordChange/PasswordChange";
 import PermissionsAdmin from "./pages/AdminLayout/PermissionsAdmin/PermissionsAdmin";
 import PrivateRoute from "./component/PrivateRoute/PrivateRoute";
+import ForbiddenPage from "./pages/ForbiddenPage/ForbiddenPage";
 
 const adminTheme = {
     token: {
@@ -111,6 +112,10 @@ const router = createBrowserRouter([
                 element: <MyMeetings />
             }
         ]
+    },
+    {
+        path: '/forbidden',
+        element: <ForbiddenPage />,
     }
 ])
 

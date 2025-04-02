@@ -2,3 +2,8 @@
     background-color: #dfe1e6;
     /* background-color: #ccd0dc; */
 }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-3px) rotate(-5deg); }
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion';
 import styles from './LoginPage.module.css'
 import { loginAPI, registerAPI, sendcaptchaAPI } from '../../apis/user';
-import { message } from 'antd';
+import { Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 interface AuthData {
@@ -24,6 +24,7 @@ const LoginPage: React.FC = () => {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const LoginPage: React.FC = () => {
     }, 1000);
 
     try {
-      await sendcaptchaAPI(authData.email).then(res=> {
+      await sendcaptchaAPI(authData.email).then(res => {
         if (res.code === 1) {
         } else {
           message.error('验证码发送失败');
@@ -62,37 +63,41 @@ const LoginPage: React.FC = () => {
 
   // 处理登录逻辑
   const handleLogin = async () => {
+    setIsLoading(true)
     try {
-      const res = await loginAPI(authData).then();
+      const res = await loginAPI(authData)
       if (res.code === 1) {
-        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('token', res.data.token)
         navigate('/')
       } else {
-        message.error(res.msg || '登录失败');
+        message.error(res.msg || '登录失败')
       }
     } catch (error) {
       message.error("登录失败，请检查网络连接")
+    } finally {
+      setIsLoading(false)
     }
   }
 
   // 处理注册逻辑
   const handleRegister = async () => {
-    const { email, password, username } = authData;
-    const data = { email, password, username, captcha: authData.verificationCode };
+    setIsLoading(true)
+    const { email, password, username } = authData
+    const data = { email, password, username, captcha: authData.verificationCode }
     try {
-      const res = await registerAPI(data).then();
+      const res = await registerAPI(data)
       if (res.code === 1) {
-        message.success('注册成功，请登录');
-        handleChangeLoginState();
+        message.success('注册成功，请登录')
+        handleChangeLoginState()
       } else {
-        message.error(res.msg || '注册失败');
+        message.error(res.msg || '注册失败')
       }
     } catch (error) {
       message.error("注册失败，请检查网络连接")
-      console.error(error);
+    } finally {
+      setIsLoading(false)
     }
   }
-
   // 处理登录/注册逻辑
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,12 +271,15 @@ const LoginPage: React.FC = () => {
             </div>
           )}
 
-          <button
-            type="submit"
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isLoading}
             className={styles.button}
+            block
           >
             {isRegistering ? '立即注册' : '进入系统'}
-          </button>
+          </Button>
 
           <div className={styles.toggleAuth}>
             <motion.button

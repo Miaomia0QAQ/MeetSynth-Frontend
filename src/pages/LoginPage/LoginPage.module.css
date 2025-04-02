@@ -98,6 +98,7 @@
 }
 
 .button {
+    height: 50px;
     width: 100%;
     padding: 15px;
     background: linear-gradient(45deg, #00ffff, #7028e4);
@@ -277,6 +278,19 @@
 /* 为输入框添加聚焦动画 */
 .inputBox input:focus {
     animation: inputGlow 1.5s infinite alternate;
+}
+
+.loadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 @keyframes inputGlow {

@@ -77,7 +77,7 @@ const AudioVideoUploader = ({ activeSection }: AudioVideoUploaderProps) => {
                     <Card className="featuresCard">
                         <CheckCircleFilled className="iconAccent" />
                         <Title level={4} style={{ margin: '16px 0', color: 'white' }}>出稿快</Title>
-                        <Text type="secondary" style={{ color: 'white' }}>1小时音频最快5分钟出稿</Text>
+                        <Text type="secondary" style={{ color: 'white' }}>10分钟音频最快5分钟出稿</Text>
                     </Card>
                 </div>
 
