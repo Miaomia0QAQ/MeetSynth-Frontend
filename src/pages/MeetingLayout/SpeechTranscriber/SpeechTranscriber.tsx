@@ -18,6 +18,7 @@ interface SpeechTranscriberProps {
     title: string;
     hasContent: boolean;
     transcripts: TranscriptItem[];
+    getRole: (text: string) => void;
     recorderState: 'record' | 'edit';
     editingContent: string;
     onRecord: () => void;
@@ -28,7 +29,7 @@ interface SpeechTranscriberProps {
     handleEditSubmit: (id: number) => void;
     handleEditKeyDown: (id: number, e: React.KeyboardEvent) => void;
     handleDelete: (id: number) => void;
-    onTranscriptUpdate: (index: number, transcript: string) => void;
+    onTranscriptUpdate: (transcript: string) => void;
 }
 
 const SpeechTranscriber = ({
@@ -46,10 +47,12 @@ const SpeechTranscriber = ({
     handleEditSubmit,
     handleEditKeyDown,
     handleDelete,
+    getRole,
 }: SpeechTranscriberProps) => {
     const [status, setStatus] = useState<TranscribeStatus>('UNDEFINED');
     // const [resultText, setResultText] = useState('');
     const [resultTextTemp, setResultTextTemp] = useState('');
+    const [pendingAnalysis, setPendingAnalysis] = useState(false);
 
     // 录音组件实例
     const recorderRef = useRef<any>(null);
@@ -125,7 +128,7 @@ const SpeechTranscriber = ({
             });
 
             if (result.cn.st.type === '0') {
-                onTranscriptUpdate(0, temp)
+                onTranscriptUpdate(temp)
                 setResultTextTemp('');
             } else {
                 setResultTextTemp(temp);
@@ -141,7 +144,7 @@ const SpeechTranscriber = ({
         const signa = hex_md5(appId + ts);
         const signatureSha = CryptoJS.HmacSHA1(signa, secretKey);
         const signature = CryptoJS.enc.Base64.stringify(signatureSha);
-        return `wss://rtasr.xfyun.cn/v1/ws?appid=${appId}&ts=${ts}&signa=${encodeURIComponent(signature)}`;
+        return `wss://rtasr.xfyun.cn/v1/ws?roleType=2&appid=${appId}&ts=${ts}&signa=${encodeURIComponent(signature)}`;
     };
 
     // 处理控制按钮的点击事件
@@ -150,31 +153,19 @@ const SpeechTranscriber = ({
             connectWebSocket();
         } else if (['CONNECTING', 'OPEN'].includes(status)) {
             recorderRef.current?.stop();
+            // 设置需要执行分析的标记
+            setPendingAnalysis(true);
         }
     };
 
-    // 保存录音转译原文
-    // const saveTranscript = () => {
-    //     if (transcripts.length > 0) {
-    //         let result = '';
-    //         transcripts.forEach((item) => {
-    //             if (item.text) {
-    //                 result += `${item.text}\n`
-    //             }
-    //         });
-    //         if (result !== '') {
-    //             saveTranscriptAPI(id, result).then(res => {
-    //                 if (res.code === 1) {
-    //                 } else {
-    //                     message.error(res.msg || '录音保存失败');
-    //                 }
-    //             }).catch(err => {
-    //                 message.error('录音保存失败，请检查网络');
-    //                 console.log(err);
-    //             })
-    //         }
-    //     }
-    // };
+    // 监听transcripts变化执行请求
+    useEffect(() => {
+        if (pendingAnalysis && transcripts.length > 0) {
+            const lastItem = transcripts[transcripts.length - 1];
+            getRole(lastItem.text);
+            setPendingAnalysis(false);
+        }
+    }, [transcripts, pendingAnalysis]);
 
     return (
         <div className={`left-panel ${hasContent ? 'has-content' : ''}`}>
@@ -219,7 +210,9 @@ const SpeechTranscriber = ({
                                     ) : (
                                         <>
                                             <span className="text">{item.text}</span>
-                                            <span className='text'>{resultTextTemp}</span>
+                                            {index === transcripts.length - 1 && (
+                                                <span className='text'>{resultTextTemp}</span>
+                                            )}
                                             <div className="action-buttons">
                                                 <EditOutlined onClick={() => handleEdit(index)} className="edit-icon" />
                                                 <DeleteOutlined onClick={() => handleDelete(index)} className="delete-icon" />

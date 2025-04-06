@@ -124,3 +124,13 @@
 .avatar:hover {
     transform: scale(1.1);
 }
+
+.defaultAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #9c9c9c;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+}

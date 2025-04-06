@@ -87,7 +87,7 @@ export async function saveTranscriptAPI(id: string, transcript: string): Promise
 
 // 保存ai总结
 export async function saveAISummaryAPI(id: string, content: string): Promise<Result> {
-    console.log(id, content);
+    console.log("zhesljkfsjklsjkl");
     return request({
         url: 'meeting/saveAISummary',
         method: 'post',
@@ -137,4 +137,17 @@ export async function createMeetingByAudioAPI(audio: File): Promise<Result> {
         method: 'post',
         data: formData,
    });
+}
+
+// 角色区分
+export async function getRoleAPI(id: string, text: string): Promise<Result> {
+    return request({
+        url: 'ai/resolution',
+        method: 'get',
+        params: {
+            meeting_id: id,
+            text
+        },
+        timeout: 60000, // 设置超时时间为60秒
+    })
 }

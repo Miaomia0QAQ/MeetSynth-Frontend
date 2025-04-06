@@ -10,6 +10,7 @@ import './MarkdownRenderer.css';
 import AIChatInput from './AIChatInput/AIChatInput';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import remarkBreaks from 'remark-breaks';
 
 // 定义支持的编程语言类型
 type SupportedLanguage =
@@ -166,7 +167,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       {/* 内容显示 */}
       <div className="markdown-container" id='md-content'>
         <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkMath]}
+          remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]}
           rehypePlugins={[rehypeKatex, rehypeSyntaxHighlight]}
           components={{
             code({ node, className, children, ...props }) {

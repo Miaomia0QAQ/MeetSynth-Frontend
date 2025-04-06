@@ -9,13 +9,19 @@ import MeetingInfoModal from './MeetingInfoModal/MeetingInfoModal';
 import UploadModal from './UploadModal/UploadModal';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SpeechTranscriber from './SpeechTranscriber/SpeechTranscriber';
-import { getMeetingAPI, saveTranscriptAPI } from '../../apis/meeting';
+import { getMeetingAPI, getRoleAPI, saveTranscriptAPI } from '../../apis/meeting';
 import { meetingInfo } from '../../types/meetingInfo';
 import { debounce } from 'lodash-es';
 
 export interface TranscriptItem {
   text: string;
   editable: boolean;
+  speaker: string;
+}
+
+interface RawTranscriptItem {
+  speaker: string;
+  text: string;
 }
 const MeetingLayout = () => {
   const [searchParams] = useSearchParams();
@@ -61,18 +67,18 @@ const MeetingLayout = () => {
 
   // 处理转写内容添加事件
   const onTranscriptAdd = (transcript: string) => {
-    setTranscripts(prev => [...prev, { id: String(Date.now()), text: transcript, editable: false }])
+    setTranscripts(prev => [...prev, { text: transcript, editable: false, speaker: '0' }])
   }
 
-  const onTranscriptUpdate = (i: number, transcript: string) => {
+  const onTranscriptUpdate = (transcript: string) => {
     setTranscripts(prev => {
       // 数组为空时创建新元素
       if (prev.length === 0) {
-        return [{ text: transcript, editable: false }];
+        return [{ text: transcript, editable: false, speaker: '0' }];
       }
-      // 数组有元素时更新第一个元素的text
+      // 数组有元素时更新最后一个元素的text
       return prev.map((item, index) =>
-        index === i
+        index === transcripts.length - 1
           ? { ...item, text: item.text + transcript }
           : item
       );
@@ -81,6 +87,7 @@ const MeetingLayout = () => {
 
   // 处理可编辑事件
   const handleEdit = (index: number) => {
+    if (editingContent !== '') return;
     setEditingContent(transcripts[index].text || '')
     setTranscripts(prev => prev.map((item, i) => i === index ? { ...item, editable: true } : item))
   }
@@ -102,6 +109,37 @@ const MeetingLayout = () => {
     setTranscripts(prev => prev.filter((_, i) => i !== index));
   }
 
+  // 角色区分
+  const getRole = async (text: string) => {
+    try {
+      // 调用API获取角色区分结果
+      const res = await getRoleAPI(id, text);
+      
+      if (res.code !== 1) {
+        throw new Error(res.msg || '角色区分失败');
+      }
+  
+      // 转换数据格式并保留可编辑状态
+      const newItems: TranscriptItem[] = res.data.map((item: RawTranscriptItem) => ({
+        text: item.text,
+        speaker: item.speaker,
+        editable: false
+      }));
+  
+      // 替换最后一个元素并保持数组引用不变
+      setTranscripts(prev => {
+        // 保留最后一个元素之前的内容
+        const base = prev.slice(0, -1); 
+        // 合并新解析的内容
+        return [...base, ...newItems];
+      });
+  
+    } catch (err) {
+      console.error('角色区分错误:', err);
+      throw err;
+    }
+  }
+
   // 获取当前日期
   const getDate = () => {
     const date = new Date();
@@ -110,13 +148,45 @@ const MeetingLayout = () => {
     return `${month}月${day}日`;
   }
 
+  // 处理录音转文字数据格式
+  const processTranscript = (rawData: RawTranscriptItem[]): TranscriptItem[] => {
+    if (rawData.length === 0) return [];
+
+    const result: TranscriptItem[] = [];
+    let currentItem: TranscriptItem = {
+      speaker: rawData[0].speaker,
+      text: rawData[0].text,
+      editable: false
+    };
+
+    for (let i = 1; i < rawData.length; i++) {
+      const item = rawData[i];
+      if (item.speaker === currentItem.speaker) {
+        currentItem.text += item.text;
+      } else {
+        result.push(currentItem);
+        currentItem = {
+          speaker: item.speaker,
+          text: item.text,
+          editable: false
+        };
+      }
+    }
+
+    result.push(currentItem);
+    return result;
+  }
+
   // 获取会议信息
   const getMeetingInfo = () => {
     getMeetingAPI(id).then(res => {
       if (res.code === 1) {
         const { title, description, startTime, participants, leader, recording, content } = res.data;
+        // 处理会议信息
         setInfo({ ...info, title, description, startTime, participants, leader });
-        setTranscripts([{ text: recording, editable: false }]);
+        // 处理会议内容
+        setTranscripts(processTranscript(JSON.parse(recording)));
+        // 处理会议总结
         summaryRef.current?.setSummary(content);
       }
     })
@@ -186,11 +256,8 @@ const MeetingLayout = () => {
     // 离开时强制保存最后一次修改
     return () => {
       debouncedSave.cancel();
-      // 离开时强制保存最后一次修改
-      const lastContent = transcripts
-        .map(t => t.text?.trim())
-        .join('\n');
-      if (lastContent) saveTranscript(lastContent);
+      const lastContent = JSON.stringify(transcripts.map(({ editable, ...rest }) => rest));
+      if (lastContent && lastContent !== '[]') saveTranscript(lastContent);
     };
   }, [])
 
@@ -202,10 +269,7 @@ const MeetingLayout = () => {
 
   // 自动保存触发逻辑
   useEffect(() => {
-    const content = transcripts
-      .map(t => t.text?.trim())
-      .filter(Boolean)
-      .join('\n');
+    const content = JSON.stringify(transcripts.map(({ editable, ...rest }) => rest))
 
     if (content) {
       debouncedSave(content);
@@ -225,7 +289,14 @@ const MeetingLayout = () => {
               <HomeFilled style={{ fontSize: '30px', color: '#A3AAF2' }} />
             </div>
             <div className="header-content">
-              <div className="date-box">2024/03/02</div>
+              <div className="date-box">
+                {new Date().toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour12: false
+                }).replace(/\//g, '/')}
+              </div>
             </div>
             <div className="menu-button">
               <LeftCircleOutlined style={{ fontSize: '36px', color: '#A3AAF2' }} />
@@ -255,6 +326,7 @@ const MeetingLayout = () => {
                 handleEditSubmit={handleEditSubmit}
                 handleEditKeyDown={handleEditKeyDown}
                 handleDelete={handleDelete}
+                getRole={getRole}
               />
             </Splitter.Panel>
 
@@ -289,7 +361,7 @@ const MeetingLayout = () => {
         id={id}
       />
 
-    </div >
+    </div>
   );
 };
 

@@ -90,7 +90,7 @@ const Header: React.FC<HeaderProps> = ({ scrollToSection }) => {
       baseItems.push({
         label: (
           <div
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/admin/dashboard')}
             className={styles.menuItem}
           >
             <DashboardOutlined style={{ fontSize: 16, marginRight: 10 }} />

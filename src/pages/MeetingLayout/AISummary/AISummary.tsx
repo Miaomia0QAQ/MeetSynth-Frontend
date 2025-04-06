@@ -119,7 +119,7 @@ const AISummary = forwardRef((
             }
         }).catch(err => {
             message.error('总结保存失败，请检查网络');
-            console.log(err);
+            console.error(err);
         });
     }
 
