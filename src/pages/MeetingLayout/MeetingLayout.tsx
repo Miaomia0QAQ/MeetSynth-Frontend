@@ -78,7 +78,7 @@ const MeetingLayout = () => {
       }
       // 数组有元素时更新最后一个元素的text
       return prev.map((item, index) =>
-        index === transcripts.length - 1
+        index === prev.length - 1
           ? { ...item, text: item.text + transcript }
           : item
       );
